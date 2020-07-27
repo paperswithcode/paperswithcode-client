@@ -1,0 +1,23 @@
+# Run artifacts
+__pycache__/
+*.py[cod]
+
+# Build artifacts
+sotabenchapi.egg-info
+build/
+dist/
+
+# Test artifacts
+.coverage
+
+# IDE Configuration
+.idea
+.vscode
+
+# Virtualenv
+.venv
+venv
+.envrc
+
+# Documentation artefacts
+docs/_build/
