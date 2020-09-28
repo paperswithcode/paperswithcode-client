@@ -1,5 +1,5 @@
-from paperswithcode.commands import cli
+from paperswithcode.commands import app
 
 
 if __name__ == "__main__":
-    cli()
+    app()

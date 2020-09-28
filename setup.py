@@ -25,6 +25,6 @@ setup(
     install_requires=io.open("requirements.txt").read().splitlines(),
     entry_points="""
         [console_scripts]
-        pwc=paperswithcode.__main__:cli
+        pwc=paperswithcode.__main__:app
     """,
 )

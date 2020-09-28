@@ -1,3 +1,3 @@
-__all__ = ["cli"]
+__all__ = ["app"]
 
-from paperswithcode.commands.cli import cli
+from paperswithcode.commands.app import app
