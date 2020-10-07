@@ -50,7 +50,7 @@ class Metric(TeaClientModel):
     is_loss: bool
 
 
-class Row(TeaClientModel):
+class Result(TeaClientModel):
     """Evaluation table row object.
 
     Attributes:
@@ -86,4 +86,4 @@ class Sota(TeaClientModel):
     task: str
     dataset: str
     metrics: List[Metric]
-    rows: List[Row]
+    rows: List[Result]

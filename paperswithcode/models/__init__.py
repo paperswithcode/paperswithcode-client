@@ -19,7 +19,7 @@ __all__ = [
     "SotaPartial",
     "SotaPartials",
     "Metric",
-    "Row",
+    "Result",
     "Sota",
 ]
 
@@ -39,6 +39,6 @@ from paperswithcode.models.sota import (
     SotaPartial,
     SotaPartials,
     Metric,
-    Row,
+    Result,
     Sota,
 )

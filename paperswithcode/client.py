@@ -22,6 +22,7 @@ from paperswithcode.models import (
     Datasets,
     Method,
     Methods,
+    Result,
     SotaPartial,
     SotaPartials,
     Sota,
@@ -113,6 +114,46 @@ class PapersWithCodeClient:
         return [
             Repository(**r)
             for r in self.http.get(f"/papers/{paper_id}/repositories/")
+        ]
+
+    @handler
+    def paper_task_list(self, paper_id: str) -> List[Task]:
+        """Return a list of tasks mentioned in the paper.
+
+        Args:
+            paper_id (str): ID of the paper.
+
+        Returns:
+            List[Task]: List of task objects.
+        """
+        return [Task(**t) for t in self.http.get(f"/papers/{paper_id}/tasks/")]
+
+    @handler
+    def paper_method_list(self, paper_id: str) -> List[Method]:
+        """Return a list of methods mentioned in the paper.
+
+        Args:
+            paper_id (str): ID of the paper.
+
+        Returns:
+            List[Method]: List of method objects.
+        """
+        return [
+            Method(**t) for t in self.http.get(f"/papers/{paper_id}/methods/")
+        ]
+
+    @handler
+    def paper_result_list(self, paper_id: str) -> List[Result]:
+        """Return a list of evaluation results for the paper.
+
+        Args:
+            paper_id (str): ID of the paper.
+
+        Returns:
+            List[Result]: List of result objects.
+        """
+        return [
+            Result(**t) for t in self.http.get(f"/papers/{paper_id}/results/")
         ]
 
     @handler
