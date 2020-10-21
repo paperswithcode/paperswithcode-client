@@ -18,8 +18,14 @@ __all__ = [
     "Methods",
     "EvaluationTable",
     "EvaluationTables",
+    "EvaluationTableCreateRequest",
+    "EvaluationTableUpdateRequest",
     "Metric",
+    "MetricCreateRequest",
+    "MetricUpdateRequest",
     "Result",
+    "ResultCreateRequest",
+    "ResultUpdateRequest",
 ]
 
 from paperswithcode.models.page import Page
@@ -37,6 +43,12 @@ from paperswithcode.models.method import Method, Methods
 from paperswithcode.models.evaluation import (
     EvaluationTable,
     EvaluationTables,
+    EvaluationTableCreateRequest,
+    EvaluationTableUpdateRequest,
     Metric,
+    MetricCreateRequest,
+    MetricUpdateRequest,
     Result,
+    ResultCreateRequest,
+    ResultUpdateRequest,
 )

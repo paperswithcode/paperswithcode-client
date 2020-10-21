@@ -22,9 +22,16 @@ from paperswithcode.models import (
     Datasets,
     Method,
     Methods,
+    Metric,
+    MetricCreateRequest,
+    MetricUpdateRequest,
     Result,
+    ResultCreateRequest,
+    ResultUpdateRequest,
     EvaluationTable,
     EvaluationTables,
+    EvaluationTableCreateRequest,
+    EvaluationTableUpdateRequest,
 )
 
 
@@ -369,7 +376,7 @@ class PapersWithCodeClient:
             task_id (str): ID of the task.
 
         Returns:
-            List[SotaPartial]: List of short evaluation table objects.
+            List[EvaluationTable]: List of short evaluation table objects.
         """
         return [
             EvaluationTable(**sp)
@@ -419,7 +426,7 @@ class PapersWithCodeClient:
             dataset_id (str): ID of the dasaset.
 
         Returns:
-            List[SotaPartial]: List of short evaluation table objects.
+            List[EvaluationTable]: List of short evaluation table objects.
         """
         return [
             EvaluationTable(**sp)
@@ -469,7 +476,7 @@ class PapersWithCodeClient:
                 Default: 50.
 
         Returns:
-            SotaPartials: Evaluation table page object.
+            EvaluationTables: Evaluation table page object.
         """
         return self.__page(
             self.http.get(
@@ -486,8 +493,222 @@ class PapersWithCodeClient:
             evaluation_id (str): ID of the evaluation table.
 
         Returns:
-            Sota: Evaluation table object.
+            EvaluationTable: Evaluation table object.
         """
         return EvaluationTable(
             **self.http.get(f"/evaluations/{evaluation_id}/")
         )
+
+    @handler
+    def evaluation_create(
+        self, evaluation: EvaluationTableCreateRequest
+    ) -> EvaluationTable:
+        """Create an evaluation table.
+
+        Args:
+            evaluation (EvaluationTableCreateRequest): Evaluation table create
+                request object.
+
+        Returns:
+            EvaluationTable: The new created evaluation table.
+        """
+        return EvaluationTable(
+            **self.http.post("/evaluations/", data=evaluation.dict())
+        )
+
+    @handler
+    def evaluation_update(
+        self, evaluation_id: str, evaluation: EvaluationTableUpdateRequest
+    ) -> EvaluationTable:
+        """Update an evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            evaluation (EvaluationTableUpdateRequest): Evaluation table update
+                request object.
+
+        Returns:
+            EvaluationTable: The updated evaluation table.
+        """
+        return EvaluationTable(
+            **self.http.patch(
+                f"/evaluations/{evaluation_id}/", data=evaluation.dict()
+            )
+        )
+
+    @handler
+    def evaluation_delete(self, evaluation_id: str):
+        """Delete an evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+        """
+        self.http.delete(f"/evaluations/{evaluation_id}/")
+
+    @handler
+    def evaluation_metric_list(self, evaluation_id: str) -> List[Metric]:
+        """List all metrics used in the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+
+        Returns:
+            List[Metric]: All metrics used in the evaluation table.
+        """
+        return [
+            Metric(**m)
+            for m in self.http.get(f"/evaluations/{evaluation_id}/metrics/")
+        ]
+
+    @handler
+    def evaluation_metric_get(
+        self, evaluation_id: str, metric_id: str
+    ) -> Metric:
+        """Get a metrics used in the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            metric_id (str): ID of the metric.
+
+        Returns:
+            Metric: Requested metric.
+        """
+        return Metric(
+            **self.http.get(
+                f"/evaluations/{evaluation_id}/metrics/{metric_id}/"
+            )
+        )
+
+    @handler
+    def evaluation_metric_add(
+        self, evaluation_id: str, metric: MetricCreateRequest
+    ) -> Metric:
+        """Add a metrics to the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            metric (MetricCreateRequest): Metric create request.
+
+        Returns:
+            Metric: Created metric.
+        """
+        return Metric(
+            **self.http.post(
+                f"/evaluations/{evaluation_id}/metrics/", data=metric.dict()
+            )
+        )
+
+    @handler
+    def evaluation_metric_update(
+        self, evaluation_id: str, metric_id: str, metric: MetricUpdateRequest
+    ) -> Metric:
+        """Update a metrics in the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            metric_id (str): ID of the metric.
+            metric (MetricCreateRequest): Metric update request.
+
+        Returns:
+            Metric: Updated metric.
+        """
+        return Metric(
+            **self.http.patch(
+                f"/evaluations/{evaluation_id}/metrics/{metric_id}/",
+                data=metric.dict(),
+            )
+        )
+
+    @handler
+    def evaluation_metric_delete(self, evaluation_id: str, metric_id: str):
+        """Delete a metrics from the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            metric_id (str): ID of the metric.
+        """
+        self.http.delete(f"/evaluations/{evaluation_id}/metrics/{metric_id}/")
+
+    @handler
+    def evaluation_result_list(self, evaluation_id: str) -> List[Result]:
+        """List all results from the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+
+        Returns:
+            List[Result]: All results from the evaluation table.
+        """
+        return [
+            Result(**r)
+            for r in self.http.get(f"/evaluations/{evaluation_id}/results/")
+        ]
+
+    @handler
+    def evaluation_result_get(
+        self, evaluation_id: str, result_id: str
+    ) -> Result:
+        """Get a result from the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            result_id (str): ID of the result.
+
+        Returns:
+            Result: Requested result.
+        """
+        return Result(
+            **self.http.get(
+                f"/evaluations/{evaluation_id}/results/{result_id}/"
+            )
+        )
+
+    @handler
+    def evaluation_result_add(
+        self, evaluation_id: str, result: ResultCreateRequest
+    ) -> Result:
+        """Add a result to the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            result (ResultCreateRequest): Result create request.
+
+        Returns:
+            Result: Created result.
+        """
+        return Result(
+            **self.http.post(
+                f"/evaluations/{evaluation_id}/results/", data=result.dict()
+            )
+        )
+
+    @handler
+    def evaluation_result_update(
+        self, evaluation_id: str, result_id: str, result: ResultUpdateRequest
+    ) -> Result:
+        """Update a result in the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            result_id (str): ID of the result.
+            result (ResultUpdateRequest): Result update request.
+
+        Returns:
+            Result: Updated result.
+        """
+        return Result(
+            **self.http.patch(
+                f"/evaluations/{evaluation_id}/results/{result_id}/",
+                data=result.dict(),
+            )
+        )
+
+    @handler
+    def evaluation_result_delete(self, evaluation_id: str, result_id: str):
+        """Delete a result from the evaluation table.
+
+        Args:
+            evaluation_id (str): ID of the evaluation table.
+            result_id (str): ID of the result.
+        """
+        self.http.delete(f"/evaluations/{evaluation_id}/results/{result_id}/")
