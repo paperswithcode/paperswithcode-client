@@ -1,3 +1,3 @@
-tea-client==0.0.5
+tea-client==0.0.6
 tea-console==0.0.5
 typer==0.3.2

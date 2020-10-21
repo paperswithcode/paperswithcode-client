@@ -23,18 +23,19 @@ from paperswithcode.models import (
     Method,
     Methods,
     Result,
-    SotaPartial,
-    SotaPartials,
-    Sota,
+    EvaluationTable,
+    EvaluationTables,
 )
 
 
 class PapersWithCodeClient:
     """PapersWithCode client."""
 
-    def __init__(self):
+    def __init__(self, token=None):
         self.http = HttpClient(
-            url=f"{config.server_url}/api/v{config.api_version}"
+            url=f"{config.server_url}/api/v{config.api_version}",
+            token=token or "",
+            authorization_method=HttpClient.Authorization.token,
         )
 
     @staticmethod
@@ -361,7 +362,7 @@ class PapersWithCodeClient:
         )
 
     @handler
-    def task_sota_list(self, task_id: str) -> List[SotaPartial]:
+    def task_evaluation_list(self, task_id: str) -> List[EvaluationTable]:
         """Return a list of evaluation tables for a selected task.
 
         Args:
@@ -371,8 +372,8 @@ class PapersWithCodeClient:
             List[SotaPartial]: List of short evaluation table objects.
         """
         return [
-            SotaPartial(**sp)
-            for sp in self.http.get(f"/tasks/{task_id}/sota/")
+            EvaluationTable(**sp)
+            for sp in self.http.get(f"/tasks/{task_id}/evaluations/")
         ]
 
     @handler
@@ -409,7 +410,9 @@ class PapersWithCodeClient:
         return Dataset(**self.http.get(f"/datasets/{dataset_id}/"))
 
     @handler
-    def dataset_sota_list(self, dataset_id: str) -> List[SotaPartial]:
+    def dataset_evaluation_list(
+        self, dataset_id: str
+    ) -> List[EvaluationTable]:
         """Return a list of evaluation tables for a selected dataset.
 
         Args:
@@ -419,8 +422,8 @@ class PapersWithCodeClient:
             List[SotaPartial]: List of short evaluation table objects.
         """
         return [
-            SotaPartial(**sp)
-            for sp in self.http.get(f"/datasets/{dataset_id}/sota/")
+            EvaluationTable(**sp)
+            for sp in self.http.get(f"/datasets/{dataset_id}/evaluations/")
         ]
 
     @handler
@@ -455,9 +458,9 @@ class PapersWithCodeClient:
         return Method(**self.http.get(f"/methods/{method_id}/"))
 
     @handler
-    def sota_list(
+    def evaluation_list(
         self, page: int = 1, items_per_page: int = 50
-    ) -> SotaPartials:
+    ) -> EvaluationTables:
         """Return a paginated list of evaluation tables.
 
         Args:
@@ -470,19 +473,21 @@ class PapersWithCodeClient:
         """
         return self.__page(
             self.http.get(
-                "/sota/", params=self.__params(page, items_per_page)
+                "/evaluations/", params=self.__params(page, items_per_page)
             ),
-            SotaPartials,
+            EvaluationTables,
         )
 
     @handler
-    def sota_get(self, sota_id: str) -> Sota:
+    def evaluation_get(self, evaluation_id: str) -> EvaluationTable:
         """Return a evaluation table by it's ID.
 
         Args:
-            sota_id (str): ID of the evaluation table.
+            evaluation_id (str): ID of the evaluation table.
 
         Returns:
             Sota: Evaluation table object.
         """
-        return Sota(**self.http.get(f"/sota/{sota_id}/"))
+        return EvaluationTable(
+            **self.http.get(f"/evaluations/{evaluation_id}/")
+        )

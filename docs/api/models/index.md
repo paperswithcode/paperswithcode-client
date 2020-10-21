@@ -10,5 +10,5 @@
    dataset.md
    method.md
    repository.md
-   sota.md
+   evaluation.md
 ```

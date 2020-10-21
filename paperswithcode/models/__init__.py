@@ -16,11 +16,10 @@ __all__ = [
     "Datasets",
     "Method",
     "Methods",
-    "SotaPartial",
-    "SotaPartials",
+    "EvaluationTable",
+    "EvaluationTables",
     "Metric",
     "Result",
-    "Sota",
 ]
 
 from paperswithcode.models.page import Page
@@ -35,10 +34,9 @@ from paperswithcode.models.conference import (
 from paperswithcode.models.task import Area, Areas, Task, Tasks
 from paperswithcode.models.dataset import Dataset, Datasets
 from paperswithcode.models.method import Method, Methods
-from paperswithcode.models.sota import (
-    SotaPartial,
-    SotaPartials,
+from paperswithcode.models.evaluation import (
+    EvaluationTable,
+    EvaluationTables,
     Metric,
     Result,
-    Sota,
 )
