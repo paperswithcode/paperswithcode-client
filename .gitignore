@@ -1,6 +1,10 @@
 # Run artifacts
 __pycache__/
 *.py[cod]
+.ipynb_checkpoints
+
+# Notebooks
+*.ipynb
 
 # Build artifacts
 paperswithcode.egg-info
