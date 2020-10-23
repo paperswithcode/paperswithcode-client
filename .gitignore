@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 
 # Build artifacts
-sotabenchapi.egg-info
+paperswithcode.egg-info
 build/
 dist/
 

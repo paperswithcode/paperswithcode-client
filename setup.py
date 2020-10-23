@@ -2,10 +2,10 @@ import io
 from setuptools import setup, find_packages
 from paperswithcode import __version__
 
-name = "paperswithcode"
+name = "paperswithcode-client"
 author = "Viktor Kerkez"
 author_email = "alefnula@gmail.com"
-url = "https://paperswithcode.com"
+url = "https://github.com/paperswithcode/paperswithcode-client"
 
 
 setup(
@@ -25,6 +25,6 @@ setup(
     install_requires=io.open("requirements.txt").read().splitlines(),
     entry_points="""
         [console_scripts]
-        pwc=paperswithcode.__main__:cli
+        pwc=paperswithcode.__main__:app
     """,
 )
