@@ -12,6 +12,7 @@ with [PapersWithCode](http://www.paperswithcode.com).
 
    installation.md
    quickstart.md
+   evaluations.md
 ```
 
 

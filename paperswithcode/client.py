@@ -38,9 +38,10 @@ from paperswithcode.models import (
 class PapersWithCodeClient:
     """PapersWithCode client."""
 
-    def __init__(self, token=None):
+    def __init__(self, token=None, url=None):
+        url = url or config.server_url
         self.http = HttpClient(
-            url=f"{config.server_url}/api/v{config.api_version}",
+            url=f"{url}/api/v{config.api_version}",
             token=token or "",
             authorization_method=HttpClient.Authorization.token,
         )
@@ -513,7 +514,7 @@ class PapersWithCodeClient:
             EvaluationTable: The new created evaluation table.
         """
         return EvaluationTable(
-            **self.http.post("/evaluations/", data=evaluation.dict())
+            **self.http.post("/evaluations/", data=evaluation)
         )
 
     @handler
@@ -532,7 +533,7 @@ class PapersWithCodeClient:
         """
         return EvaluationTable(
             **self.http.patch(
-                f"/evaluations/{evaluation_id}/", data=evaluation.dict()
+                f"/evaluations/{evaluation_id}/", data=evaluation
             )
         )
 
@@ -594,7 +595,7 @@ class PapersWithCodeClient:
         """
         return Metric(
             **self.http.post(
-                f"/evaluations/{evaluation_id}/metrics/", data=metric.dict()
+                f"/evaluations/{evaluation_id}/metrics/", data=metric
             )
         )
 
@@ -615,7 +616,7 @@ class PapersWithCodeClient:
         return Metric(
             **self.http.patch(
                 f"/evaluations/{evaluation_id}/metrics/{metric_id}/",
-                data=metric.dict(),
+                data=metric,
             )
         )
 
@@ -678,7 +679,7 @@ class PapersWithCodeClient:
         """
         return Result(
             **self.http.post(
-                f"/evaluations/{evaluation_id}/results/", data=result.dict()
+                f"/evaluations/{evaluation_id}/results/", data=result
             )
         )
 
@@ -699,7 +700,7 @@ class PapersWithCodeClient:
         return Result(
             **self.http.patch(
                 f"/evaluations/{evaluation_id}/results/{result_id}/",
-                data=result.dict(),
+                data=result,
             )
         )
 
