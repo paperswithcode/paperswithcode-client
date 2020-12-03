@@ -26,6 +26,12 @@ __all__ = [
     "Result",
     "ResultCreateRequest",
     "ResultUpdateRequest",
+    "ResultSyncRequest",
+    "MetricSyncRequest",
+    "EvaluationTableSyncRequest",
+    "ResultSyncResponse",
+    "MetricSyncResponse",
+    "EvaluationTableSyncResponse",
 ]
 
 from paperswithcode.models.page import Page
@@ -51,4 +57,10 @@ from paperswithcode.models.evaluation import (
     Result,
     ResultCreateRequest,
     ResultUpdateRequest,
+    ResultSyncRequest,
+    MetricSyncRequest,
+    EvaluationTableSyncRequest,
+    ResultSyncResponse,
+    MetricSyncResponse,
+    EvaluationTableSyncResponse,
 )

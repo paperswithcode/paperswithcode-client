@@ -32,6 +32,8 @@ from paperswithcode.models import (
     EvaluationTables,
     EvaluationTableCreateRequest,
     EvaluationTableUpdateRequest,
+    EvaluationTableSyncRequest,
+    EvaluationTableSyncResponse,
 )
 
 
@@ -713,3 +715,11 @@ class PapersWithCodeClient:
             result_id (str): ID of the result.
         """
         self.http.delete(f"/evaluations/{evaluation_id}/results/{result_id}/")
+
+    @handler
+    def evaluation_synchronize(
+        self, evaluation: EvaluationTableSyncRequest
+    ) -> EvaluationTableSyncResponse:
+        return EvaluationTableSyncResponse(
+            **self.http.post("/rpc/evaluation-synchronize/"), data=evaluation
+        )
