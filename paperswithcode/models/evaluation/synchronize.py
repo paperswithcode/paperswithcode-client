@@ -49,6 +49,9 @@ class EvaluationTableSyncRequest(TeaClientModel):
         dataset (str): ID of the dataset used in evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
+        metric (list): List of metrics sync objects used in the evaluation.
+        results (list): List of result sync objects - results of the
+            evaluation.
     """
 
     task: str

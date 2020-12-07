@@ -721,5 +721,5 @@ class PapersWithCodeClient:
         self, evaluation: EvaluationTableSyncRequest
     ) -> EvaluationTableSyncResponse:
         return EvaluationTableSyncResponse(
-            **self.http.post("/rpc/evaluation-synchronize/"), data=evaluation
+            **self.http.post("/rpc/evaluation-synchronize/", data=evaluation)
         )
