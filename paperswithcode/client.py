@@ -1,5 +1,5 @@
 from urllib import parse
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 from tea_client.http import HttpClient
@@ -82,10 +82,13 @@ class PapersWithCodeClient:
         )
 
     @handler
-    def paper_list(self, page: int = 1, items_per_page: int = 50) -> Papers:
+    def paper_list(
+        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
         """Return a paginated list of papers.
 
         Args:
+            q (str): Filter papers by querying the paper title and abstract.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -93,11 +96,13 @@ class PapersWithCodeClient:
         Returns:
             Papers: Papers object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
         return self.__page(
-            self.http.get(
-                "/papers/", params=self.__params(page, items_per_page),
-            ),
-            Papers,
+            self.http.get("/papers/", params=params, timeout=timeout), Papers
         )
 
     @handler
@@ -318,10 +323,13 @@ class PapersWithCodeClient:
         )
 
     @handler
-    def task_list(self, page: int = 1, items_per_page: int = 50) -> Tasks:
+    def task_list(
+        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
         """Return a paginated list of tasks.
 
         Args:
+            q (str): Filter tasks by querying the task name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -329,11 +337,13 @@ class PapersWithCodeClient:
         Returns:
             Tasks: Tasks object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
         return self.__page(
-            self.http.get(
-                "/tasks/", params=self.__params(page, items_per_page)
-            ),
-            Tasks,
+            self.http.get("/tasks/", params=params, timeout=timeout), Tasks
         )
 
     @handler
@@ -388,11 +398,12 @@ class PapersWithCodeClient:
 
     @handler
     def dataset_list(
-        self, page: int = 1, items_per_page: int = 50
+        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
     ) -> Datasets:
         """Return a paginated list of datasets.
 
         Args:
+            q (str): Filter datasets by querying the dataset name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -400,10 +411,13 @@ class PapersWithCodeClient:
         Returns:
             Datasets: Datasets object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
         return self.__page(
-            self.http.get(
-                "/datasets/", params=self.__params(page, items_per_page)
-            ),
+            self.http.get("/datasets/", params=params, timeout=timeout),
             Datasets,
         )
 
