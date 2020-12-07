@@ -54,7 +54,7 @@ class EvaluationTableSyncRequest(TeaClientModel):
     task: str
     dataset: str
     external_id: Optional[str] = ""
-    metrics = List[MetricSyncRequest] = Field(default_factory=list)
+    metrics: List[MetricSyncRequest] = Field(default_factory=list)
     results: List[ResultSyncRequest] = Field(default_factory=list)
 
 
@@ -111,5 +111,5 @@ class EvaluationTableSyncResponse(TeaClientModel):
     task: str
     dataset: str
     external_id: Optional[str] = ""
-    metrics = List[MetricSyncResponse] = Field(default_factory=list)
+    metrics: List[MetricSyncResponse] = Field(default_factory=list)
     results: List[ResultSyncResponse] = Field(default_factory=list)
