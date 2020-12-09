@@ -19,6 +19,30 @@ class Dataset(TeaClientModel):
     url: Optional[str]
 
 
+class DatasetCreateRequest(TeaClientModel):
+    """Task object.
+
+    Attributes:
+        name (str): Dataset name.
+        url (str): Dataset url.
+    """
+
+    name: str
+    url: Optional[str] = None
+
+
+class DatasetUpdateRequest(TeaClientModel):
+    """Evaluation table row object.
+
+    Attributes:
+        name (str, optional): Dataset name.
+        url (str, optional): Dataset url.
+    """
+
+    name: Optional[str] = None
+    url: Optional[str] = None
+
+
 class Datasets(Page):
     """Object representing a paginated page of datasets.
 

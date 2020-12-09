@@ -17,8 +17,12 @@ from paperswithcode.models import (
     Area,
     Areas,
     Task,
+    TaskCreateRequest,
+    TaskUpdateRequest,
     Tasks,
     Dataset,
+    DatasetCreateRequest,
+    DatasetUpdateRequest,
     Datasets,
     Method,
     Methods,
@@ -359,6 +363,40 @@ class PapersWithCodeClient:
         return Task(**self.http.get(f"/tasks/{task_id}/"))
 
     @handler
+    def task_add(self, task: TaskCreateRequest) -> Task:
+        """Add a task.
+
+        Args:
+           task (TaskCreateRequest): Task create request.
+
+        Returns:
+            Task: Created task.
+        """
+        return Task(**self.http.post("/tasks/", data=task))
+
+    @handler
+    def task_update(self, task_id: str, task: TaskUpdateRequest) -> Task:
+        """Update a task.
+
+        Args:
+            task_id (str): ID of the task.
+            task (TaskUpdateRequest): Task update request.
+
+        Returns:
+            Task: Updated task.
+        """
+        return Task(**self.http.patch(f"/tasks/{task_id}/", data=task))
+
+    @handler
+    def task_delete(self, task_id: str):
+        """Delete a task.
+
+        Args:
+            task_id (str): ID of the task.
+        """
+        self.http.delete(f"/tasks/{task_id}/")
+
+    @handler
     def task_paper_list(
         self, task_id: str, page: int = 1, items_per_page: int = 50
     ) -> Papers:
@@ -432,6 +470,44 @@ class PapersWithCodeClient:
             Dataset: Dataset object.
         """
         return Dataset(**self.http.get(f"/datasets/{dataset_id}/"))
+
+    @handler
+    def dataset_add(self, dataset: DatasetCreateRequest) -> Dataset:
+        """Add a dataset.
+
+        Args:
+           dataset (DatasetCreateRequest): Dataset create request.
+
+        Returns:
+            Dataset: Created dataset.
+        """
+        return Dataset(**self.http.post("/datasets/", data=dataset))
+
+    @handler
+    def dataset_update(
+        self, dataset_id: str, dataset: DatasetUpdateRequest
+    ) -> Dataset:
+        """Update a dataset.
+
+        Args:
+            dataset_id (str): ID of the dataset.
+            dataset (DatasetUpdateRequest): Dataset update request.
+
+        Returns:
+            Dataset: Updated dataset.
+        """
+        return Dataset(
+            **self.http.patch(f"/datasets/{dataset_id}/", data=dataset)
+        )
+
+    @handler
+    def dataset_delete(self, dataset_id: str):
+        """Delete a dataset.
+
+        Args:
+            dataset_id (str): ID of the dataset.
+        """
+        self.http.delete(f"/datasets/{dataset_id}/")
 
     @handler
     def dataset_evaluation_list(

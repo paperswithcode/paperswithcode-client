@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from tea_client.models import TeaClientModel
 
@@ -44,6 +44,30 @@ class Task(TeaClientModel):
     id: str
     name: str
     description: str
+
+
+class TaskCreateRequest(TeaClientModel):
+    """Task object.
+
+    Attributes:
+        name (str): Task name.
+        description (str): Task description.
+    """
+
+    name: str
+    description: str = ""
+
+
+class TaskUpdateRequest(TeaClientModel):
+    """Evaluation table row object.
+
+    Attributes:
+        name (str, optional): Task name.
+        description (str, optional): Task description.
+    """
+
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 
 class Tasks(Page):
