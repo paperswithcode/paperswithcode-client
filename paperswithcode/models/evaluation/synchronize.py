@@ -47,6 +47,9 @@ class EvaluationTableSyncRequest(TeaClientModel):
     Attributes:
         task (str): ID of the task used in evaluation.
         dataset (str): ID of the dataset used in evaluation.
+        description (str): Evaluation table description.
+        mirror_url (str, optional): URL to the evaluation table that this table
+            is a mirror of.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
         metric (list): List of metrics sync objects used in the evaluation.
@@ -56,7 +59,9 @@ class EvaluationTableSyncRequest(TeaClientModel):
 
     task: str
     dataset: str
-    external_id: Optional[str] = ""
+    description: str = ""
+    mirror_url: Optional[str] = None
+    external_id: Optional[str] = None
     metrics: List[MetricSyncRequest] = Field(default_factory=list)
     results: List[ResultSyncRequest] = Field(default_factory=list)
 
@@ -106,13 +111,21 @@ class EvaluationTableSyncResponse(TeaClientModel):
         id (str): Evaluation table ID.
         task (str): ID of the task used in evaluation.
         dataset (str): ID of the dataset used in evaluation.
+        description (str): Evaluation table description.
+        mirror_url (str, optional): URL to the evaluation table that this table
+            is a mirror of.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
+        metric (list): List of metrics sync objects used in the evaluation.
+        results (list): List of result sync objects - results of the
+            evaluation.
     """
 
     id: str
     task: str
     dataset: str
+    description: str = ""
+    mirror_url: Optional[str] = None
     external_id: Optional[str] = ""
     metrics: List[MetricSyncResponse] = Field(default_factory=list)
     results: List[ResultSyncResponse] = Field(default_factory=list)
