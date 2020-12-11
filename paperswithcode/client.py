@@ -273,10 +273,13 @@ class PapersWithCodeClient:
         ]
 
     @handler
-    def area_list(self, page: int = 1, items_per_page: int = 50) -> Areas:
+    def area_list(
+        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+    ) -> Areas:
         """Return a paginated list of areas.
 
         Args:
+            q (str): Filter areas by querying the area name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -284,11 +287,13 @@ class PapersWithCodeClient:
         Returns:
             Areas: Areas object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
         return self.__page(
-            self.http.get(
-                "/areas/", params=self.__params(page, items_per_page)
-            ),
-            Areas,
+            self.http.get("/areas/", params=params, timeout=timeout), Areas
         )
 
     @handler

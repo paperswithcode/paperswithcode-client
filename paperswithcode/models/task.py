@@ -52,10 +52,14 @@ class TaskCreateRequest(TeaClientModel):
     Attributes:
         name (str): Task name.
         description (str): Task description.
+        area (str, optional): Task area ID.
+        parent_task (str, optional): ID of the parent task.
     """
 
     name: str
     description: str = ""
+    area: Optional[str] = None
+    parent_task: Optional[str] = None
 
 
 class TaskUpdateRequest(TeaClientModel):
@@ -64,10 +68,14 @@ class TaskUpdateRequest(TeaClientModel):
     Attributes:
         name (str, optional): Task name.
         description (str, optional): Task description.
+        area (str, optional): Task area ID.
+        parent_task (str, optional): ID of the parent task.
     """
 
     name: Optional[str] = None
     description: Optional[str] = None
+    area: Optional[str] = None
+    parent_task: Optional[str] = None
 
 
 class Tasks(Page):
