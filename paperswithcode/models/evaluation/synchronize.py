@@ -1,11 +1,14 @@
+from datetime import datetime
 from typing import Optional, List
 
 from pydantic import Field
 
 from tea_client.models import TeaClientModel
 
+from paperswithcode.models.evaluation.result import _ResultRequest
 
-class ResultSyncRequest(TeaClientModel):
+
+class ResultSyncRequest(_ResultRequest):
     """Evaluation table row object.
 
     Attributes:
@@ -16,6 +19,7 @@ class ResultSyncRequest(TeaClientModel):
         paper (str, optional): Paper describing the evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
+        evaluation_date (datetime, optional): Date of the result evaluation.
     """
 
     metrics: dict
@@ -23,6 +27,7 @@ class ResultSyncRequest(TeaClientModel):
     paper: Optional[str]
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
+    evaluation_date: Optional[datetime] = None
 
 
 class MetricSyncRequest(TeaClientModel):
@@ -78,6 +83,7 @@ class ResultSyncResponse(TeaClientModel):
         paper (str, optional): Paper describing the evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
+        evaluation_date (datetime, optional): Date of the result evaluation.
     """
 
     id: str
@@ -86,6 +92,7 @@ class ResultSyncResponse(TeaClientModel):
     paper: Optional[str]
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
+    evaluation_date: Optional[datetime] = None
 
 
 class MetricSyncResponse(TeaClientModel):

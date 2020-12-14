@@ -1,4 +1,5 @@
 from urllib import parse
+from datetime import datetime
 from typing import Dict, List, Optional
 
 
@@ -84,6 +85,24 @@ class PapersWithCodeClient:
             previous_page=previous_page,
             results=result["results"],
         )
+
+    @staticmethod
+    def __create_result(data: dict) -> Result:
+        evaluation_date = data.get("evaluation_date", None)
+        if isinstance(evaluation_date, str):
+            data["evaluation_date"] = datetime.strptime(
+                evaluation_date, "%Y-%m-%e"
+            )
+        return Result(**data)
+
+    @staticmethod
+    def __create_result_sync_data(data: dict) -> dict:
+        evaluation_date = data.get("evaluation_date", None)
+        if isinstance(evaluation_date, str):
+            data["evaluation_date"] = datetime.strptime(
+                evaluation_date, "%Y-%m-%e"
+            )
+        return data
 
     @handler
     def paper_list(
@@ -173,7 +192,8 @@ class PapersWithCodeClient:
             List[Result]: List of result objects.
         """
         return [
-            Result(**t) for t in self.http.get(f"/papers/{paper_id}/results/")
+            self.__create_result(result)
+            for result in self.http.get(f"/papers/{paper_id}/results/")
         ]
 
     @handler
@@ -738,8 +758,10 @@ class PapersWithCodeClient:
             List[Result]: All results from the evaluation table.
         """
         return [
-            Result(**r)
-            for r in self.http.get(f"/evaluations/{evaluation_id}/results/")
+            self.__create_result(result)
+            for result in self.http.get(
+                f"/evaluations/{evaluation_id}/results/"
+            )
         ]
 
     @handler
@@ -755,10 +777,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Requested result.
         """
-        return Result(
-            **self.http.get(
-                f"/evaluations/{evaluation_id}/results/{result_id}/"
-            )
+        return self.__create_result(
+            self.http.get(f"/evaluations/{evaluation_id}/results/{result_id}/")
         )
 
     @handler
@@ -774,8 +794,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Created result.
         """
-        return Result(
-            **self.http.post(
+        return self.__create_result(
+            self.http.post(
                 f"/evaluations/{evaluation_id}/results/", data=result
             )
         )
@@ -794,8 +814,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Updated result.
         """
-        return Result(
-            **self.http.patch(
+        return self.__create_result(
+            self.http.patch(
                 f"/evaluations/{evaluation_id}/results/{result_id}/",
                 data=result,
             )
@@ -815,6 +835,8 @@ class PapersWithCodeClient:
     def evaluation_synchronize(
         self, evaluation: EvaluationTableSyncRequest
     ) -> EvaluationTableSyncResponse:
-        return EvaluationTableSyncResponse(
-            **self.http.post("/rpc/evaluation-synchronize/", data=evaluation)
-        )
+        d = self.http.post("/rpc/evaluation-synchronize/", data=evaluation)
+        d["results"] = [
+            self.__create_result_sync_data(result) for result in d["results"]
+        ]
+        return EvaluationTableSyncResponse(**d)
