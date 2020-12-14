@@ -88,20 +88,10 @@ class PapersWithCodeClient:
 
     @staticmethod
     def __create_result(data: dict) -> Result:
-        evaluation_date = data.get("evaluation_date", None)
-        if isinstance(evaluation_date, str):
-            data["evaluation_date"] = datetime.strptime(
-                evaluation_date, "%Y-%m-%e"
-            )
         return Result(**data)
 
     @staticmethod
     def __create_result_sync_data(data: dict) -> dict:
-        evaluation_date = data.get("evaluation_date", None)
-        if isinstance(evaluation_date, str):
-            data["evaluation_date"] = datetime.strptime(
-                evaluation_date, "%Y-%m-%e"
-            )
         return data
 
     @handler

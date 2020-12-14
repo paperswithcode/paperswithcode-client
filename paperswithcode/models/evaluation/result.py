@@ -16,7 +16,7 @@ class Result(TeaClientModel):
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
         best_metric (str, optional): Name of the best metric.
-        evaluation_date (datetime, optional): Date of the result evaluation.
+        evaluated_on (datetime, optional): Date of the result evaluation.
     """
 
     id: str
@@ -26,7 +26,7 @@ class Result(TeaClientModel):
     uses_additional_data: bool
     paper: Optional[str]
     best_metric: Optional[str]
-    evaluation_date: Optional[datetime]
+    evaluated_on: Optional[datetime]
 
 
 class _ResultRequest(TeaClientModel):
@@ -50,9 +50,9 @@ class _ResultRequest(TeaClientModel):
             exclude_defaults=exclude_defaults,
             exclude_none=exclude_none,
         )
-        evaluation_date = d.get("evaluation_date")
-        if isinstance(evaluation_date, datetime):
-            d["evaluation_date"] = evaluation_date.strftime("%Y-%m-%d")
+        evaluated_on = d.get("evaluated_on")
+        if isinstance(evaluated_on, datetime):
+            d["evaluated_on"] = evaluated_on.strftime("%Y-%m-%d")
         return d
 
 
@@ -65,14 +65,14 @@ class ResultCreateRequest(_ResultRequest):
         uses_additional_data (bool): Does this evaluation uses additional data
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
-        evaluation_date (datetime, optional): Date of the result evaluation.
+        evaluated_on (str, optional): Date of the result evaluation: YYYY-MM-DD format
     """
 
     metrics: dict
     methodology: str
     uses_additional_data: bool
     paper: Optional[str] = None
-    evaluation_date: Optional[datetime] = None
+    evaluated_on: Optional[str] = None
 
 
 class ResultUpdateRequest(_ResultRequest):
@@ -85,11 +85,11 @@ class ResultUpdateRequest(_ResultRequest):
             additional data not provided in the dataset used for other
             evaluations.
         paper (str, optional): Paper describing the evaluation.
-        evaluation_date (datetime, optional): Date of the result evaluation.
+        evaluated_on (datetime, optional): Date of the result evaluation: YYYY-MM-DD format
     """
 
     metrics: Optional[dict] = None
     methodology: Optional[str] = None
     uses_additional_data: Optional[bool] = None
     paper: Optional[str] = None
-    evaluation_date: Optional[datetime] = None
+    evaluated_on: Optional[str] = None
