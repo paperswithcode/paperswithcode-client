@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional, List
 
 from pydantic import Field
@@ -19,7 +18,7 @@ class ResultSyncRequest(_ResultRequest):
         paper (str, optional): Paper describing the evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
-        evaluation_date (datetime, optional): Date of the result evaluation.
+        evaluation_date (str, optional): Evaluation date in YYYY-MM-DD format
     """
 
     metrics: dict
@@ -27,7 +26,7 @@ class ResultSyncRequest(_ResultRequest):
     paper: Optional[str]
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
-    evaluation_date: Optional[datetime] = None
+    evaluation_date: Optional[str] = None
 
 
 class MetricSyncRequest(TeaClientModel):
@@ -83,7 +82,7 @@ class ResultSyncResponse(TeaClientModel):
         paper (str, optional): Paper describing the evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
-        evaluation_date (datetime, optional): Date of the result evaluation.
+        evaluation_date (str, optional): Evaluation date in YYYY-MM-DD format
     """
 
     id: str
@@ -92,7 +91,7 @@ class ResultSyncResponse(TeaClientModel):
     paper: Optional[str]
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
-    evaluation_date: Optional[datetime] = None
+    evaluation_date: Optional[str] = None
 
 
 class MetricSyncResponse(TeaClientModel):
