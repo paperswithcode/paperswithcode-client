@@ -19,6 +19,7 @@ class ResultSyncRequest(_ResultRequest):
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
         evaluated_on (str, optional): Evaluation date in YYYY-MM-DD format
+        external_source_url (str, option): The URL to the external source (eg competition)
     """
 
     metrics: dict
@@ -27,6 +28,7 @@ class ResultSyncRequest(_ResultRequest):
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
     evaluated_on: Optional[str] = None
+    external_source_url: Optional[str] = None
 
 
 class MetricSyncRequest(TeaClientModel):
@@ -83,6 +85,7 @@ class ResultSyncResponse(TeaClientModel):
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
         evaluated_on (str, optional): Evaluation date in YYYY-MM-DD format
+        external_source_url (str, option): The URL to the external source (eg competition)
     """
 
     id: str
@@ -92,6 +95,7 @@ class ResultSyncResponse(TeaClientModel):
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
     evaluated_on: Optional[str] = None
+    external_source_url: Optional[str] = None
 
 
 class MetricSyncResponse(TeaClientModel):

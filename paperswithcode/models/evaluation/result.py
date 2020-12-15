@@ -17,6 +17,7 @@ class Result(TeaClientModel):
         paper (str, optional): Paper describing the evaluation.
         best_metric (str, optional): Name of the best metric.
         evaluated_on (datetime, optional): Date of the result evaluation.
+        external_source_url (str, option): The URL to the external source (eg competition)
     """
 
     id: str
@@ -27,6 +28,7 @@ class Result(TeaClientModel):
     paper: Optional[str]
     best_metric: Optional[str]
     evaluated_on: Optional[datetime]
+    external_source_url: Optional[str]
 
 
 class _ResultRequest(TeaClientModel):
@@ -66,6 +68,7 @@ class ResultCreateRequest(_ResultRequest):
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
         evaluated_on (str, optional): Date of the result evaluation: YYYY-MM-DD format
+        external_source_url (str, option): The URL to the external source (eg competition)
     """
 
     metrics: dict
@@ -73,6 +76,7 @@ class ResultCreateRequest(_ResultRequest):
     uses_additional_data: bool
     paper: Optional[str] = None
     evaluated_on: Optional[str] = None
+    external_source_url: Optional[str] = None
 
 
 class ResultUpdateRequest(_ResultRequest):
@@ -86,6 +90,7 @@ class ResultUpdateRequest(_ResultRequest):
             evaluations.
         paper (str, optional): Paper describing the evaluation.
         evaluated_on (datetime, optional): Date of the result evaluation: YYYY-MM-DD format
+        external_source_url (str, option): The URL to the external source (eg competition)
     """
 
     metrics: Optional[dict] = None
@@ -93,3 +98,4 @@ class ResultUpdateRequest(_ResultRequest):
     uses_additional_data: Optional[bool] = None
     paper: Optional[str] = None
     evaluated_on: Optional[str] = None
+    external_source_url: Optional[str] = None
