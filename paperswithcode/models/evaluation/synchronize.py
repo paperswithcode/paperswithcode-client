@@ -18,7 +18,7 @@ class ResultSyncRequest(_ResultRequest):
         paper (str, optional): Paper describing the evaluation.
         external_id (str, optional): Optional external ID used to identify rows
             when doing sync.
-        evaluated_on (str, optional): Evaluation date in YYYY-MM-DD format
+        evaluated_on (str): Evaluation date in YYYY-MM-DD format
         external_source_url (str, option): The URL to the external source (eg competition)
     """
 
