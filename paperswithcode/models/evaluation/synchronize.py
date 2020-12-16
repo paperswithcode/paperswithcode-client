@@ -27,7 +27,7 @@ class ResultSyncRequest(_ResultRequest):
     paper: Optional[str]
     uses_additional_data: bool = False
     external_id: Optional[str] = ""
-    evaluated_on: str
+    evaluated_on: Optional[str] = None
     external_source_url: Optional[str] = None
 
 
