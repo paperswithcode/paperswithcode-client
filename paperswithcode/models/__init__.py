@@ -11,8 +11,12 @@ __all__ = [
     "Area",
     "Areas",
     "Task",
+    "TaskCreateRequest",
+    "TaskUpdateRequest",
     "Tasks",
     "Dataset",
+    "DatasetCreateRequest",
+    "DatasetUpdateRequest",
     "Datasets",
     "Method",
     "Methods",
@@ -26,6 +30,12 @@ __all__ = [
     "Result",
     "ResultCreateRequest",
     "ResultUpdateRequest",
+    "ResultSyncRequest",
+    "MetricSyncRequest",
+    "EvaluationTableSyncRequest",
+    "ResultSyncResponse",
+    "MetricSyncResponse",
+    "EvaluationTableSyncResponse",
 ]
 
 from paperswithcode.models.page import Page
@@ -37,8 +47,20 @@ from paperswithcode.models.conference import (
     Proceeding,
     Proceedings,
 )
-from paperswithcode.models.task import Area, Areas, Task, Tasks
-from paperswithcode.models.dataset import Dataset, Datasets
+from paperswithcode.models.task import (
+    Area,
+    Areas,
+    Task,
+    TaskCreateRequest,
+    TaskUpdateRequest,
+    Tasks,
+)
+from paperswithcode.models.dataset import (
+    Dataset,
+    DatasetCreateRequest,
+    DatasetUpdateRequest,
+    Datasets,
+)
 from paperswithcode.models.method import Method, Methods
 from paperswithcode.models.evaluation import (
     EvaluationTable,
@@ -51,4 +73,10 @@ from paperswithcode.models.evaluation import (
     Result,
     ResultCreateRequest,
     ResultUpdateRequest,
+    ResultSyncRequest,
+    MetricSyncRequest,
+    EvaluationTableSyncRequest,
+    ResultSyncResponse,
+    MetricSyncResponse,
+    EvaluationTableSyncResponse,
 )

@@ -9,6 +9,12 @@ __all__ = [
     "EvaluationTables",
     "EvaluationTableCreateRequest",
     "EvaluationTableUpdateRequest",
+    "ResultSyncRequest",
+    "MetricSyncRequest",
+    "EvaluationTableSyncRequest",
+    "ResultSyncResponse",
+    "MetricSyncResponse",
+    "EvaluationTableSyncResponse",
 ]
 
 from paperswithcode.models.evaluation.metric import (
@@ -26,4 +32,12 @@ from paperswithcode.models.evaluation.table import (
     EvaluationTables,
     EvaluationTableCreateRequest,
     EvaluationTableUpdateRequest,
+)
+from paperswithcode.models.evaluation.synchronize import (
+    ResultSyncRequest,
+    MetricSyncRequest,
+    EvaluationTableSyncRequest,
+    ResultSyncResponse,
+    MetricSyncResponse,
+    EvaluationTableSyncResponse,
 )

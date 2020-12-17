@@ -7,7 +7,7 @@ __pycache__/
 *.ipynb
 
 # Build artifacts
-paperswithcode.egg-info
+paperswithcode_client.egg-info
 build/
 dist/
 

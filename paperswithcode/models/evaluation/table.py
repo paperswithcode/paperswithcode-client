@@ -12,11 +12,16 @@ class EvaluationTable(TeaClientModel):
         id (str): Evaluation table ID.
         task (str): ID of the task used in evaluation.
         dataset (str): ID of the dataset used in evaluation.
+        description (str): Evaluation table description.
+        mirror_url (str, optional): URL to the evaluation table that this table
+            is a mirror of.
     """
 
     id: str
     task: str
     dataset: str
+    description: str = ""
+    mirror_url: Optional[str] = None
 
 
 class EvaluationTableCreateRequest(TeaClientModel):
@@ -25,22 +30,32 @@ class EvaluationTableCreateRequest(TeaClientModel):
     Attributes:
         task (str): ID of the task used in evaluation.
         dataset (str): ID of the dataset used in evaluation.
+        description (str): Evaluation table description.
+        mirror_url (str, optional): URL to the evaluation table that this table
+            is a mirror of.
     """
 
     task: str
     dataset: str
+    description: str = ""
+    mirror_url: Optional[str] = None
 
 
 class EvaluationTableUpdateRequest(TeaClientModel):
     """Evaluation table update request object.
 
     Attributes:
-        task (str): ID of the task used in evaluation.
-        dataset (str): ID of the dataset used in evaluation.
+        task (str, optional): ID of the task used in evaluation.
+        dataset (str, optional): ID of the dataset used in evaluation.
+        description (str, optional): Evaluation table description.
+        mirror_url (str, optional): URL to the evaluation table that this table
+            is a mirror of.f
     """
 
     task: Optional[str] = None
     dataset: Optional[str] = None
+    description: Optional[str] = None
+    mirror_url: Optional[str] = None
 
 
 class EvaluationTables(Page):
