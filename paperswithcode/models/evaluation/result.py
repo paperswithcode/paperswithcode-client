@@ -64,7 +64,7 @@ class ResultCreateRequest(_ResultRequest):
     Attributes:
         metrics (dict): Dictionary of metrics and metric values.
         methodology (str): Methodology used for this implementation.
-        uses_additional_data (bool): Does this evaluation uses additional data
+        uses_additional_data (bool, optional): Does this evaluation uses additional data
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
         evaluated_on (str, optional): Date of the result evaluation: YYYY-MM-DD format
@@ -73,7 +73,7 @@ class ResultCreateRequest(_ResultRequest):
 
     metrics: dict
     methodology: str
-    uses_additional_data: bool
+    uses_additional_data: Optional[bool] = False
     paper: Optional[str] = None
     evaluated_on: Optional[str] = None
     external_source_url: Optional[str] = None
