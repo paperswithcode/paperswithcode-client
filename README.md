@@ -53,7 +53,7 @@ client = PapersWithCodeClient(token="your_secret_api_token")
 
 To mirror a live competition, you'll need to make sure the corresponding task (e.g. "Image Classification") 
 exists on Papers with Code. You can use the search to check if it exists, and if it doesn't, you can add a 
-new task on the [Task additional page](https://paperswithcode.com/add/task). 
+new task on the [Task addition page](https://paperswithcode.com/add/task). 
 
 Now we are ready to programatically create the competition on Papers with Code. Here is an example of how we would do
 this on a fictional VeryTinyImageNet dataset.
