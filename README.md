@@ -55,6 +55,17 @@ To mirror a live competition, you'll need to make sure the corresponding task (e
 exists on Papers with Code. You can use the search to check if it exists, and if it doesn't, you can add a 
 new task on the [Task addition page](https://paperswithcode.com/add/task). 
 
+If you cannot find your dataset on the website, you can create it with the API like this:
+
+```python
+from paperswithcode.models.dataset import *
+client.dataset_add(
+    DatasetCreateRequest(
+        name="VeryTinyImageNet",
+    )
+)
+```
+
 Now we are ready to programatically create the competition on Papers with Code. Here is an example of how we would do
 this on a fictional VeryTinyImageNet dataset.
 
