@@ -52,7 +52,7 @@ class TaskCreateRequest(TeaClientModel):
     Attributes:
         name (str): Task name.
         description (str): Task description.
-        area (str, optional): Task area ID.
+        area (str, optional): Task area ID or area name.
         parent_task (str, optional): ID of the parent task.
     """
 
