@@ -180,7 +180,11 @@ on regular intervals. If a row already exists, it will be merged and no duplicat
 
 For in-depth API docs please refer to our [ReadTheDocs](https://paperswithcode-client.readthedocs.io/en/latest/) page.
 
+By using the API you agree that any competition data you submit will be licenced under [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+
 If you need any help contact us on hello@paperswithcode.com. 
+
+
 
 
 
