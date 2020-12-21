@@ -1,5 +1,5 @@
 ```eval_rst
-Dastaset Models
+Dataset Models
 ===============
 
 .. automodule:: paperswithcode.models.dataset
