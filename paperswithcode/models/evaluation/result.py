@@ -16,7 +16,7 @@ class Result(TeaClientModel):
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
         best_metric (str, optional): Name of the best metric.
-        evaluated_on (datetime, optional): Date of the result evaluation.
+        evaluated_on (str, optional): Date of the result evaluation in YYYY-MM-DD format.
         external_source_url (str, option): The URL to the external source (eg competition)
     """
 
@@ -27,7 +27,7 @@ class Result(TeaClientModel):
     uses_additional_data: bool
     paper: Optional[str]
     best_metric: Optional[str]
-    evaluated_on: Optional[datetime]
+    evaluated_on: Optional[str]
     external_source_url: Optional[str]
 
 
