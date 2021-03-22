@@ -155,7 +155,7 @@ class PapersWithCodeClient:
         Returns:
             List[Task]: List of task objects.
         """
-        return [Task(**t) for t in self.http.get(f"/papers/{paper_id}/tasks/")]
+        return [Task(**t) for t in self.http.get(f"/papers/{paper_id}/tasks/")['results']]
 
     @handler
     def paper_method_list(self, paper_id: str) -> List[Method]:
