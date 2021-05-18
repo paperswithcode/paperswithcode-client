@@ -1,5 +1,4 @@
 from urllib import parse
-from datetime import datetime
 from typing import Dict, List, Optional
 
 
@@ -155,7 +154,10 @@ class PapersWithCodeClient:
         Returns:
             List[Task]: List of task objects.
         """
-        return [Task(**t) for t in self.http.get(f"/papers/{paper_id}/tasks/")['results']]
+        return [
+            Task(**t)
+            for t in self.http.get(f"/papers/{paper_id}/tasks/")["results"]
+        ]
 
     @handler
     def paper_method_list(self, paper_id: str) -> List[Method]:
@@ -263,7 +265,11 @@ class PapersWithCodeClient:
 
     @handler
     def proceeding_paper_list(
-        self, conference_id: str, proceeding_id: str, page: int = 1, items_per_page: int = 50
+        self,
+        conference_id: str,
+        proceeding_id: str,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Papers:
         """Return a list of papers published in a confernce proceeding.
 
@@ -284,7 +290,7 @@ class PapersWithCodeClient:
                 f"/papers/",
                 params=params,
             ),
-            Papers
+            Papers,
         )
 
     @handler
