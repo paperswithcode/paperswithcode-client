@@ -69,7 +69,7 @@ class PapersWithCodeClient:
             return 1
         else:
             q = parse.parse_qs(p.query)
-            return q["page"][0]
+            return q.get("page", [1])[0]
 
     @classmethod
     def __page(cls, result, page_model):
@@ -263,24 +263,29 @@ class PapersWithCodeClient:
 
     @handler
     def proceeding_paper_list(
-        self, conference_id: str, proceeding_id: str
-    ) -> List[Paper]:
+        self, conference_id: str, proceeding_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
         """Return a list of papers published in a confernce proceeding.
 
         Args:
             conference_id (str): ID of the conference.
             proceeding_id (str): ID of the proceding.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Paper]: List of paper objects.
+            Papers: Papers object.
         """
-        return [
-            Paper(**p)
-            for p in self.http.get(
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
                 f"/conferences/{conference_id}/proceedings/{proceeding_id}"
-                f"/papers/"
-            )
-        ]
+                f"/papers/",
+                params=params,
+            ),
+            Papers
+        )
 
     @handler
     def area_list(
