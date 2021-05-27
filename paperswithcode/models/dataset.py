@@ -11,11 +11,13 @@ class Dataset(TeaClientModel):
     Attributes:
         id (str): Dataset ID.
         name (str): Dataset name.
+        full_name (str, optional): Dataset full name.
         url (str, optional): URL for dataset download.
     """
 
     id: str
     name: str
+    full_name: Optional[str]
     url: Optional[str]
 
 
@@ -24,10 +26,12 @@ class DatasetCreateRequest(TeaClientModel):
 
     Attributes:
         name (str): Dataset name.
-        url (str): Dataset url.
+        full_name (str, optional): Dataset full name.
+        url (str, optional): Dataset url.
     """
 
     name: str
+    full_name: Optional[str] = None
     url: Optional[str] = None
 
 
