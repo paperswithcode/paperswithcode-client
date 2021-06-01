@@ -453,6 +453,52 @@ class PapersWithCodeClient:
         self.http.delete(f"/tasks/{task_id}/")
 
     @handler
+    def task_parent_list(
+        self, task_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
+        """Return a paginated list of parent tasks for a selected task.
+
+        Args:
+            task_id (str): ID of the task.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Tasks: Tasks object.
+        """
+        return self.__page(
+            self.http.get(
+                f"/tasks/{task_id}/parents/",
+                params=self.__params(page, items_per_page),
+            ),
+            Tasks,
+        )
+
+    @handler
+    def task_child_list(
+        self, task_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
+        """Return a paginated list of child tasks for a selected task.
+
+        Args:
+            task_id (str): ID of the task.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Tasks: Tasks object.
+        """
+        return self.__page(
+            self.http.get(
+                f"/tasks/{task_id}/children/",
+                params=self.__params(page, items_per_page),
+            ),
+            Tasks,
+        )
+
+    @handler
     def task_paper_list(
         self, task_id: str, page: int = 1, items_per_page: int = 50
     ) -> Papers:
