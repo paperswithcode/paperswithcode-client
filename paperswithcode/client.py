@@ -95,12 +95,22 @@ class PapersWithCodeClient:
 
     @handler
     def paper_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        arxiv_id: Optional[str] = None,
+        title: Optional[str] = None,
+        abstract: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Papers:
         """Return a paginated list of papers.
 
         Args:
-            q (str): Filter papers by querying the paper title and abstract.
+            q (str, optional): Filter papers by querying the paper title and
+                abstract.
+            arxiv_id (str, optional): Filter papers by arxiv id.
+            title (str, optional): Filter papers by part of the title.
+            abstract (str, optional): Filter papers by part of the abstract.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -112,6 +122,13 @@ class PapersWithCodeClient:
         timeout = None
         if q is not None:
             params["q"] = q
+            timeout = 60
+        if arxiv_id is not None:
+            params["arxiv_id"] = arxiv_id
+        if title is not None:
+            params["title"] = title
+        if abstract is not None:
+            params["abstract"] = abstract
             timeout = 60
         return self.__page(
             self.http.get("/papers/", params=params, timeout=timeout), Papers
@@ -190,11 +207,17 @@ class PapersWithCodeClient:
 
     @handler
     def conference_list(
-        self, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Conferences:
         """Return a paginated list of conferences.
 
         Args:
+            q (str, optional): Search all searchable fields.
+            name (str, optional): Filter conferences by part of the name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -202,10 +225,13 @@ class PapersWithCodeClient:
         Returns:
             Conferences: Conferences object.
         """
+        params = self.__params(page, items_per_page)
+        if q is not None:
+            params["q"] = q
+        if name is not None:
+            params["name"] = name
         return self.__page(
-            self.http.get(
-                "/conferences/", params=self.__params(page, items_per_page)
-            ),
+            self.http.get("/conferences/", params=params),
             Conferences,
         )
 
@@ -295,12 +321,17 @@ class PapersWithCodeClient:
 
     @handler
     def area_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Areas:
         """Return a paginated list of areas.
 
         Args:
-            q (str): Filter areas by querying the area name.
+            q (str, optional): Filter areas by querying the area name.
+            name (str, optional): Filter areas by part of the name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -313,6 +344,9 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
+
         return self.__page(
             self.http.get("/areas/", params=params, timeout=timeout), Areas
         )
@@ -354,12 +388,17 @@ class PapersWithCodeClient:
 
     @handler
     def task_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Tasks:
         """Return a paginated list of tasks.
 
         Args:
-            q (str): Filter tasks by querying the task name.
+            q (str, optional): Filter tasks by querying the task name.
+            name (str, optional): Filter tasks by part of th name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -372,6 +411,8 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
         return self.__page(
             self.http.get("/tasks/", params=params, timeout=timeout), Tasks
         )
@@ -462,12 +503,19 @@ class PapersWithCodeClient:
 
     @handler
     def dataset_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Datasets:
         """Return a paginated list of datasets.
 
         Args:
-            q (str): Filter datasets by querying the dataset name.
+            q (str, optional): Filter datasets by querying the dataset name.
+            name (str, optional): Filter datasets by their name.
+            full_name (str, optional): Filter datasets by their full name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -480,6 +528,10 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
+        if full_name is not None:
+            params["full_name"] = full_name
         return self.__page(
             self.http.get("/datasets/", params=params, timeout=timeout),
             Datasets,
@@ -553,10 +605,20 @@ class PapersWithCodeClient:
         ]
 
     @handler
-    def method_list(self, page: int = 1, items_per_page: int = 50) -> Methods:
+    def method_list(
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Methods:
         """Return a paginated list of methods.
 
         Args:
+            q (str, optional): Search all searchable fields.
+            name (str, optional): Filter methods by part of the name.
+            full_name (str, optional): Filter methods by part of the full name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -564,10 +626,17 @@ class PapersWithCodeClient:
         Returns:
             Methods: Methods object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
+        if name is not None:
+            params["name"] = name
+        if full_name is not None:
+            params["full_name"] = full_name
         return self.__page(
-            self.http.get(
-                "/methods/", params=self.__params(page, items_per_page)
-            ),
+            self.http.get("/methods/", params=params, timeout=timeout),
             Methods,
         )
 
