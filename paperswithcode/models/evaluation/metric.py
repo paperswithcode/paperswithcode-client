@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 
 from tea_client.models import TeaClientModel
+
+from paperswithcode.models.page import Page
 
 
 class Metric(TeaClientModel):
@@ -19,6 +21,19 @@ class Metric(TeaClientModel):
     name: str
     description: str
     is_loss: bool
+
+
+class Metrics(Page):
+    """Object representing a paginated page of metrics.
+
+    Attributes:
+        count (int): Number of elements matching the query.
+        next_page (int, optional): Number of the next page.
+        previous_page (int, optional): Number of the previous page.
+        results (List[Metric]): List of metrics on this page.
+    """
+
+    results: List[Metric]
 
 
 class MetricCreateRequest(TeaClientModel):

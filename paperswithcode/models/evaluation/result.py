@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from tea_client.models import TeaClientModel
+
+from paperswithcode.models.page import Page
 
 
 class Result(TeaClientModel):
@@ -31,6 +33,19 @@ class Result(TeaClientModel):
     best_metric: Optional[str]
     evaluated_on: Optional[str]
     external_source_url: Optional[str]
+
+
+class Results(Page):
+    """Object representing a paginated page of results.
+
+    Attributes:
+        count (int): Number of elements matching the query.
+        next_page (int, optional): Number of the next page.
+        previous_page (int, optional): Number of the previous page.
+        results (List[Result]): List of results on this page.
+    """
+
+    results: List[Result]
 
 
 class _ResultRequest(TeaClientModel):

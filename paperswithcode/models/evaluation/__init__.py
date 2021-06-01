@@ -1,8 +1,10 @@
 __all__ = [
     "Metric",
+    "Metrics",
     "MetricCreateRequest",
     "MetricUpdateRequest",
     "Result",
+    "Results",
     "ResultCreateRequest",
     "ResultUpdateRequest",
     "EvaluationTable",
@@ -19,11 +21,13 @@ __all__ = [
 
 from paperswithcode.models.evaluation.metric import (
     Metric,
+    Metrics,
     MetricCreateRequest,
     MetricUpdateRequest,
 )
 from paperswithcode.models.evaluation.result import (
     Result,
+    Results,
     ResultCreateRequest,
     ResultUpdateRequest,
 )

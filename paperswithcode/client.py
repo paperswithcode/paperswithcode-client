@@ -1,5 +1,5 @@
 from urllib import parse
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 
 from tea_client.http import HttpClient
@@ -9,7 +9,7 @@ from paperswithcode.config import config
 from paperswithcode.models import (
     Paper,
     Papers,
-    Repository,
+    Repositories,
     Conference,
     Conferences,
     Proceeding,
@@ -27,9 +27,11 @@ from paperswithcode.models import (
     Method,
     Methods,
     Metric,
+    Metrics,
     MetricCreateRequest,
     MetricUpdateRequest,
     Result,
+    Results,
     ResultCreateRequest,
     ResultUpdateRequest,
     EvaluationTable,
@@ -85,14 +87,6 @@ class PapersWithCodeClient:
             results=result["results"],
         )
 
-    @staticmethod
-    def __create_result(data: dict) -> Result:
-        return Result(**data)
-
-    @staticmethod
-    def __create_result_sync_data(data: dict) -> dict:
-        return data
-
     @handler
     def paper_list(
         self,
@@ -147,63 +141,58 @@ class PapersWithCodeClient:
         return Paper(**self.http.get(f"/papers/{paper_id}/"))
 
     @handler
-    def paper_repository_list(self, paper_id: str) -> List[Repository]:
+    def paper_repository_list(self, paper_id: str) -> Repositories:
         """Return a list of paper implementations.
 
         Args:
             paper_id (str): ID of the paper.
 
         Returns:
-            List[Repository]: List of repository objects.
+            Repositories: Repositories object.
         """
-        return [
-            Repository(**r)
-            for r in self.http.get(f"/papers/{paper_id}/repositories/")
-        ]
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/repositories/"), Repositories
+        )
 
     @handler
-    def paper_task_list(self, paper_id: str) -> List[Task]:
+    def paper_task_list(self, paper_id: str) -> Tasks:
         """Return a list of tasks mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
 
         Returns:
-            List[Task]: List of task objects.
+            Tasks: Tasks object.
         """
-        return [
-            Task(**t)
-            for t in self.http.get(f"/papers/{paper_id}/tasks/")["results"]
-        ]
+        return self.__page(self.http.get(f"/papers/{paper_id}/tasks/"), Tasks)
 
     @handler
-    def paper_method_list(self, paper_id: str) -> List[Method]:
+    def paper_method_list(self, paper_id: str) -> Methods:
         """Return a list of methods mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
 
         Returns:
-            List[Method]: List of method objects.
+            Methods: Methods object.
         """
-        return [
-            Method(**t) for t in self.http.get(f"/papers/{paper_id}/methods/")
-        ]
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/methods/"), Methods
+        )
 
     @handler
-    def paper_result_list(self, paper_id: str) -> List[Result]:
+    def paper_result_list(self, paper_id: str) -> Results:
         """Return a list of evaluation results for the paper.
 
         Args:
             paper_id (str): ID of the paper.
 
         Returns:
-            List[Result]: List of result objects.
+            Results: Results object.
         """
-        return [
-            self.__create_result(result)
-            for result in self.http.get(f"/papers/{paper_id}/results/")
-        ]
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/results/"), Results
+        )
 
     @handler
     def conference_list(
@@ -487,19 +476,18 @@ class PapersWithCodeClient:
         )
 
     @handler
-    def task_evaluation_list(self, task_id: str) -> List[EvaluationTable]:
+    def task_evaluation_list(self, task_id: str) -> EvaluationTables:
         """Return a list of evaluation tables for a selected task.
 
         Args:
             task_id (str): ID of the task.
 
         Returns:
-            List[EvaluationTable]: List of short evaluation table objects.
+            EvaluationTables: EvaluationTables object.
         """
-        return [
-            EvaluationTable(**sp)
-            for sp in self.http.get(f"/tasks/{task_id}/evaluations/")
-        ]
+        return self.__page(
+            self.http.get(f"/tasks/{task_id}/evaluations/"), EvaluationTables
+        )
 
     @handler
     def dataset_list(
@@ -588,21 +576,19 @@ class PapersWithCodeClient:
         self.http.delete(f"/datasets/{dataset_id}/")
 
     @handler
-    def dataset_evaluation_list(
-        self, dataset_id: str
-    ) -> List[EvaluationTable]:
+    def dataset_evaluation_list(self, dataset_id: str) -> EvaluationTables:
         """Return a list of evaluation tables for a selected dataset.
 
         Args:
             dataset_id (str): ID of the dasaset.
 
         Returns:
-            List[EvaluationTable]: List of short evaluation table objects.
+           EvaluationTables: EvaluationTables object.
         """
-        return [
-            EvaluationTable(**sp)
-            for sp in self.http.get(f"/datasets/{dataset_id}/evaluations/")
-        ]
+        return self.__page(
+            self.http.get(f"/datasets/{dataset_id}/evaluations/"),
+            EvaluationTables,
+        )
 
     @handler
     def method_list(
@@ -734,19 +720,18 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/")
 
     @handler
-    def evaluation_metric_list(self, evaluation_id: str) -> List[Metric]:
+    def evaluation_metric_list(self, evaluation_id: str) -> Metrics:
         """List all metrics used in the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
 
         Returns:
-            List[Metric]: All metrics used in the evaluation table.
+            Metrics: Metrics object.
         """
-        return [
-            Metric(**m)
-            for m in self.http.get(f"/evaluations/{evaluation_id}/metrics/")
-        ]
+        return self.__page(
+            self.http.get(f"/evaluations/{evaluation_id}/metrics/"), Metrics
+        )
 
     @handler
     def evaluation_metric_get(
@@ -818,21 +803,18 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/metrics/{metric_id}/")
 
     @handler
-    def evaluation_result_list(self, evaluation_id: str) -> List[Result]:
+    def evaluation_result_list(self, evaluation_id: str) -> Results:
         """List all results from the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
 
         Returns:
-            List[Result]: All results from the evaluation table.
+            Results: Results object.
         """
-        return [
-            self.__create_result(result)
-            for result in self.http.get(
-                f"/evaluations/{evaluation_id}/results/"
-            )
-        ]
+        return self.__page(
+            self.http.get(f"/evaluations/{evaluation_id}/results/"), Results
+        )
 
     @handler
     def evaluation_result_get(
@@ -847,8 +829,10 @@ class PapersWithCodeClient:
         Returns:
             Result: Requested result.
         """
-        return self.__create_result(
-            self.http.get(f"/evaluations/{evaluation_id}/results/{result_id}/")
+        return Result(
+            **self.http.get(
+                f"/evaluations/{evaluation_id}/results/{result_id}/"
+            )
         )
 
     @handler
@@ -864,8 +848,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Created result.
         """
-        return self.__create_result(
-            self.http.post(
+        return Result(
+            **self.http.post(
                 f"/evaluations/{evaluation_id}/results/", data=result
             )
         )
@@ -884,8 +868,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Updated result.
         """
-        return self.__create_result(
-            self.http.patch(
+        return Result(
+            **self.http.patch(
                 f"/evaluations/{evaluation_id}/results/{result_id}/",
                 data=result,
             )
@@ -906,7 +890,5 @@ class PapersWithCodeClient:
         self, evaluation: EvaluationTableSyncRequest
     ) -> EvaluationTableSyncResponse:
         d = self.http.post("/rpc/evaluation-synchronize/", data=evaluation)
-        d["results"] = [
-            self.__create_result_sync_data(result) for result in d["results"]
-        ]
+        d["results"] = [result for result in d["results"]]
         return EvaluationTableSyncResponse(**d)
