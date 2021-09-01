@@ -55,11 +55,13 @@ class PapersWithCodeClient:
         )
 
     @staticmethod
-    def __params(page: int, items_per_page: int, **kwargs) -> Dict[str, str]:
+    def __params(
+        page: int, items_per_page: Optional[int] = None, **kwargs
+    ) -> Dict[str, str]:
         params = {key: str(value) for key, value in kwargs.items()}
-        params.update(
-            {"items_per_page": str(items_per_page), "page": str(page)}
-        )
+        params["page"] = str(page)
+        if items_per_page is not None:
+            params["items_per_page"] = str(items_per_page)
         return params
 
     @staticmethod
@@ -141,57 +143,72 @@ class PapersWithCodeClient:
         return Paper(**self.http.get(f"/papers/{paper_id}/"))
 
     @handler
-    def paper_repository_list(self, paper_id: str) -> Repositories:
+    def paper_repository_list(
+        self, paper_id: str, page: int = 1
+    ) -> Repositories:
         """Return a list of paper implementations.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
 
         Returns:
             Repositories: Repositories object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/papers/{paper_id}/repositories/"), Repositories
+            self.http.get(f"/papers/{paper_id}/repositories/", params=params),
+            Repositories,
         )
 
     @handler
-    def paper_task_list(self, paper_id: str) -> Tasks:
+    def paper_task_list(self, paper_id: str, page: int = 1) -> Tasks:
         """Return a list of tasks mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
 
         Returns:
             Tasks: Tasks object.
         """
-        return self.__page(self.http.get(f"/papers/{paper_id}/tasks/"), Tasks)
+        params = self.__params(page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/tasks/", params=params), Tasks
+        )
 
     @handler
-    def paper_method_list(self, paper_id: str) -> Methods:
+    def paper_method_list(self, paper_id: str, page: int = 1) -> Methods:
         """Return a list of methods mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
 
         Returns:
             Methods: Methods object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/papers/{paper_id}/methods/"), Methods
+            self.http.get(f"/papers/{paper_id}/methods/", params=params),
+            Methods,
         )
 
     @handler
-    def paper_result_list(self, paper_id: str) -> Results:
+    def paper_result_list(self, paper_id: str, page: int = 1) -> Results:
         """Return a list of evaluation results for the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
 
         Returns:
             Results: Results object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/papers/{paper_id}/results/"), Results
+            self.http.get(f"/papers/{paper_id}/results/", params=params),
+            Results,
         )
 
     @handler
@@ -220,8 +237,7 @@ class PapersWithCodeClient:
         if name is not None:
             params["name"] = name
         return self.__page(
-            self.http.get("/conferences/", params=params),
-            Conferences,
+            self.http.get("/conferences/", params=params), Conferences
         )
 
     @handler
@@ -522,17 +538,22 @@ class PapersWithCodeClient:
         )
 
     @handler
-    def task_evaluation_list(self, task_id: str) -> EvaluationTables:
+    def task_evaluation_list(
+        self, task_id: str, page: int = 1
+    ) -> EvaluationTables:
         """Return a list of evaluation tables for a selected task.
 
         Args:
             task_id (str): ID of the task.
+            page (int): Desired page.
 
         Returns:
             EvaluationTables: EvaluationTables object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/tasks/{task_id}/evaluations/"), EvaluationTables
+            self.http.get(f"/tasks/{task_id}/evaluations/", params=params),
+            EvaluationTables,
         )
 
     @handler
@@ -622,17 +643,23 @@ class PapersWithCodeClient:
         self.http.delete(f"/datasets/{dataset_id}/")
 
     @handler
-    def dataset_evaluation_list(self, dataset_id: str) -> EvaluationTables:
+    def dataset_evaluation_list(
+        self, dataset_id: str, page: int = 1
+    ) -> EvaluationTables:
         """Return a list of evaluation tables for a selected dataset.
 
         Args:
             dataset_id (str): ID of the dasaset.
+            page (int): Desired page.
 
         Returns:
            EvaluationTables: EvaluationTables object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/datasets/{dataset_id}/evaluations/"),
+            self.http.get(
+                f"/datasets/{dataset_id}/evaluations/", params=params
+            ),
             EvaluationTables,
         )
 
@@ -766,17 +793,24 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/")
 
     @handler
-    def evaluation_metric_list(self, evaluation_id: str) -> Metrics:
+    def evaluation_metric_list(
+        self, evaluation_id: str, page: int = 1
+    ) -> Metrics:
         """List all metrics used in the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
+            page (int): Desired page.
 
         Returns:
             Metrics: Metrics object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/evaluations/{evaluation_id}/metrics/"), Metrics
+            self.http.get(
+                f"/evaluations/{evaluation_id}/metrics/", params=params
+            ),
+            Metrics,
         )
 
     @handler
@@ -849,17 +883,24 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/metrics/{metric_id}/")
 
     @handler
-    def evaluation_result_list(self, evaluation_id: str) -> Results:
+    def evaluation_result_list(
+        self, evaluation_id: str, page: int = 1
+    ) -> Results:
         """List all results from the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
+            page (int): Desired page.
 
         Returns:
             Results: Results object.
         """
+        params = self.__params(page)
         return self.__page(
-            self.http.get(f"/evaluations/{evaluation_id}/results/"), Results
+            self.http.get(
+                f"/evaluations/{evaluation_id}/results/", params=params
+            ),
+            Results,
         )
 
     @handler
