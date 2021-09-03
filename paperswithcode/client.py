@@ -140,6 +140,27 @@ class PapersWithCodeClient:
         return Paper(**self.http.get(f"/papers/{paper_id}/"))
 
     @handler
+    def paper_dataset_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Repositories:
+        """Return a list of datasets mentioned in the paper..
+
+        Args:
+            paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Datasets: Datasets object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/datasets/", params=params),
+            Datasets,
+        )
+
+    @handler
     def paper_repository_list(
         self, paper_id: str, page: int = 1, items_per_page: int = 50
     ) -> Repositories:
