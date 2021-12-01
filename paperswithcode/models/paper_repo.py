@@ -13,10 +13,12 @@ class PaperRepo(TeaClientModel):
     Attributes:
         paper (Paper): Paper objects.
         repository (Repository, optional): Repository object.
+        is_official (bool): Is this the official implementation.
     """
 
     paper: Paper
     repository: Optional[Repository]
+    is_official: bool
 
 
 class PaperRepos(Page):
