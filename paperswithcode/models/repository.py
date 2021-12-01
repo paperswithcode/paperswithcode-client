@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from tea_client.models import TeaClientModel
 
@@ -10,18 +10,23 @@ class Repository(TeaClientModel):
 
     Attributes:
         url (str): URL of the repository.
-        is_official (bool): Is this an official implementation of the paper.
+        owner (str): Repository owner.
+        name (str): Repository name.
         description (str): Repository description.
         stars (int): Number of repository stars.
         framework (str): Implementation framework (TensorFlow, PyTorch, MXNet,
-            Torch, Jax, Caffee2...)
+            Torch, Jax, Caffee2...).
+        is_official (bool): Is this an official implementation of the paper.
+            Available only when listing repositories for a specific paper.
     """
 
     url: str
-    is_official: bool
+    owner: str
+    name: str
     description: str
     stars: int
     framework: str
+    is_official: Optional[bool]
 
 
 class Repositories(Page):

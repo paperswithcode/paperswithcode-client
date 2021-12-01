@@ -9,7 +9,11 @@ from paperswithcode.config import config
 from paperswithcode.models import (
     Paper,
     Papers,
+    Repository,
     Repositories,
+    PaperRepos,
+    Author,
+    Authors,
     Conference,
     Conferences,
     Proceeding,
@@ -69,7 +73,7 @@ class PapersWithCodeClient:
             return 1
         else:
             q = parse.parse_qs(p.query)
-            return q.get("page", [1])[0]
+            return int(q.get("page", [1])[0])
 
     @classmethod
     def __page(cls, result, page_model):
@@ -84,6 +88,34 @@ class PapersWithCodeClient:
             next_page=next_page,
             previous_page=previous_page,
             results=result["results"],
+        )
+
+    @handler
+    def search(
+        self,
+        q: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> PaperRepos:
+        """Search in a similar fashion to the frontpage search.
+
+        Args:
+            q (str, optional): Filter papers by querying the paper title and
+                abstract.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            PaperRepos: PaperRepos object.
+        """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+        return self.__page(
+            self.http.get("/search/", params=params, timeout=timeout),
+            PaperRepos,
         )
 
     @handler
@@ -241,6 +273,166 @@ class PapersWithCodeClient:
         return self.__page(
             self.http.get(f"/papers/{paper_id}/results/", params=params),
             Results,
+        )
+
+    @handler
+    def repository_list(
+        self,
+        q: Optional[str] = None,
+        owner: Optional[str] = None,
+        name: Optional[str] = None,
+        stars: Optional[int] = None,
+        framework: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Papers:
+        """Return a paginated list of repositories.
+
+        Args:
+            q (str, optional): Search all searchable fields.
+            owner (str, optional): Filter repositories by owner.
+            name (str, optional): Filter repositories by name.
+            stars (int, optional): Filter repositories by minimum number of
+                stars.
+            framework (str, optional): Filter repositories by framework.
+                Available values: tf, pytorch, mxnet, torch, caffe2, jax,
+                paddle, mindspore.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        params = self.__params(page, items_per_page)
+
+        if q is not None:
+            params["q"] = q
+        if owner is not None:
+            params["owner"] = owner
+        if name is not None:
+            params["name"] = name
+        if stars is not None:
+            params["stars"] = str(stars)
+        if framework is not None:
+            params["framework"] = framework
+        return self.__page(
+            self.http.get("/repositories/", params=params),
+            Repositories,
+        )
+
+    @handler
+    def repository_owner_list(self, owner: str) -> Repositories:
+        """List all repositories for a specific repo owner.
+
+        Args:
+            owner (str): Repository owner.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        return self.__page(
+            self.http.get(f"/repositories/{owner}"),
+            Repositories,
+        )
+
+    @handler
+    def repository_get(self, owner: str, name: str) -> Repository:
+        """Return a repository by it's owner/name pair.
+
+        Args:
+            owner (str): Owner name.
+            name (str): Repository name.
+
+        Returns:
+            Repository: Repository object.
+        """
+        return Repository(**self.http.get(f"/repositories/{owner}/{name}/"))
+
+    @handler
+    def repository_paper_list(
+        self, owner: str, name: str, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
+        """List all papers connected to the repository.
+
+        Args:
+            owner (str): Owner name.
+            name (str): Repository name.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Papers: Papers object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
+                f"/repositories/{owner}/{name}/papers/", params=params
+            ),
+            Papers,
+        )
+
+    @handler
+    def author_list(
+        self,
+        q: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Authors:
+        """Return a paginated list of paper authors.
+
+        Args:
+            q (str, optional): Search all searchable fields.
+            full_name (str, optional): Filter authors by part of their full
+                name.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        params = self.__params(page, items_per_page)
+
+        if q is not None:
+            params["q"] = q
+        if full_name is not None:
+            params["full_name"] = full_name
+        return self.__page(self.http.get("/authors/", params=params), Authors)
+
+    @handler
+    def author_get(self, author_id: str) -> Author:
+        """Return a specific author selected by its id.
+
+        Args:
+            author_id (str): Author id.
+
+        Returns:
+            Author: Author object.
+        """
+        return Author(**self.http.get(f"/authors/{author_id}/"))
+
+    @handler
+    def author_paper_list(
+        self, author_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
+        """List all papers connected to the author.
+
+        Args:
+            author_id (str): Author id.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Papers: Papers object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/authors/{author_id}/papers/", params=params),
+            Papers,
         )
 
     @handler
