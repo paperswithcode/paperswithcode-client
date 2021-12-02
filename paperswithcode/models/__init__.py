@@ -4,6 +4,10 @@ __all__ = [
     "Papers",
     "Repository",
     "Repositories",
+    "PaperRepo",
+    "PaperRepos",
+    "Author",
+    "Authors",
     "Conference",
     "Conferences",
     "Proceeding",
@@ -25,9 +29,11 @@ __all__ = [
     "EvaluationTableCreateRequest",
     "EvaluationTableUpdateRequest",
     "Metric",
+    "Metrics",
     "MetricCreateRequest",
     "MetricUpdateRequest",
     "Result",
+    "Results",
     "ResultCreateRequest",
     "ResultUpdateRequest",
     "ResultSyncRequest",
@@ -41,6 +47,8 @@ __all__ = [
 from paperswithcode.models.page import Page
 from paperswithcode.models.paper import Paper, Papers
 from paperswithcode.models.repository import Repository, Repositories
+from paperswithcode.models.paper_repo import PaperRepo, PaperRepos
+from paperswithcode.models.author import Author, Authors
 from paperswithcode.models.conference import (
     Conference,
     Conferences,
@@ -68,9 +76,11 @@ from paperswithcode.models.evaluation import (
     EvaluationTableCreateRequest,
     EvaluationTableUpdateRequest,
     Metric,
+    Metrics,
     MetricCreateRequest,
     MetricUpdateRequest,
     Result,
+    Results,
     ResultCreateRequest,
     ResultUpdateRequest,
     ResultSyncRequest,

@@ -1,6 +1,5 @@
 from urllib import parse
-from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 
 from tea_client.http import HttpClient
@@ -11,6 +10,10 @@ from paperswithcode.models import (
     Paper,
     Papers,
     Repository,
+    Repositories,
+    PaperRepos,
+    Author,
+    Authors,
     Conference,
     Conferences,
     Proceeding,
@@ -28,9 +31,11 @@ from paperswithcode.models import (
     Method,
     Methods,
     Metric,
+    Metrics,
     MetricCreateRequest,
     MetricUpdateRequest,
     Result,
+    Results,
     ResultCreateRequest,
     ResultUpdateRequest,
     EvaluationTable,
@@ -56,9 +61,8 @@ class PapersWithCodeClient:
     @staticmethod
     def __params(page: int, items_per_page: int, **kwargs) -> Dict[str, str]:
         params = {key: str(value) for key, value in kwargs.items()}
-        params.update(
-            {"items_per_page": str(items_per_page), "page": str(page)}
-        )
+        params["page"] = str(page)
+        params["items_per_page"] = str(items_per_page)
         return params
 
     @staticmethod
@@ -69,7 +73,7 @@ class PapersWithCodeClient:
             return 1
         else:
             q = parse.parse_qs(p.query)
-            return q["page"][0]
+            return int(q.get("page", [1])[0])
 
     @classmethod
     def __page(cls, result, page_model):
@@ -86,22 +90,52 @@ class PapersWithCodeClient:
             results=result["results"],
         )
 
-    @staticmethod
-    def __create_result(data: dict) -> Result:
-        return Result(**data)
+    @handler
+    def search(
+        self,
+        q: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> PaperRepos:
+        """Search in a similar fashion to the frontpage search.
 
-    @staticmethod
-    def __create_result_sync_data(data: dict) -> dict:
-        return data
+        Args:
+            q (str, optional): Filter papers by querying the paper title and
+                abstract.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            PaperRepos: PaperRepos object.
+        """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+        return self.__page(
+            self.http.get("/search/", params=params, timeout=timeout),
+            PaperRepos,
+        )
 
     @handler
     def paper_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        arxiv_id: Optional[str] = None,
+        title: Optional[str] = None,
+        abstract: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Papers:
         """Return a paginated list of papers.
 
         Args:
-            q (str): Filter papers by querying the paper title and abstract.
+            q (str, optional): Filter papers by querying the paper title and
+                abstract.
+            arxiv_id (str, optional): Filter papers by arxiv id.
+            title (str, optional): Filter papers by part of the title.
+            abstract (str, optional): Filter papers by part of the abstract.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -113,6 +147,13 @@ class PapersWithCodeClient:
         timeout = None
         if q is not None:
             params["q"] = q
+            timeout = 60
+        if arxiv_id is not None:
+            params["arxiv_id"] = arxiv_id
+        if title is not None:
+            params["title"] = title
+        if abstract is not None:
+            params["abstract"] = abstract
             timeout = 60
         return self.__page(
             self.http.get("/papers/", params=params, timeout=timeout), Papers
@@ -131,68 +172,282 @@ class PapersWithCodeClient:
         return Paper(**self.http.get(f"/papers/{paper_id}/"))
 
     @handler
-    def paper_repository_list(self, paper_id: str) -> List[Repository]:
+    def paper_dataset_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Repositories:
+        """Return a list of datasets mentioned in the paper..
+
+        Args:
+            paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Datasets: Datasets object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/datasets/", params=params),
+            Datasets,
+        )
+
+    @handler
+    def paper_repository_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Repositories:
         """Return a list of paper implementations.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Repository]: List of repository objects.
+            Repositories: Repositories object.
         """
-        return [
-            Repository(**r)
-            for r in self.http.get(f"/papers/{paper_id}/repositories/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/repositories/", params=params),
+            Repositories,
+        )
 
     @handler
-    def paper_task_list(self, paper_id: str) -> List[Task]:
+    def paper_task_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
         """Return a list of tasks mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Task]: List of task objects.
+            Tasks: Tasks object.
         """
-        return [Task(**t) for t in self.http.get(f"/papers/{paper_id}/tasks/")]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/tasks/", params=params), Tasks
+        )
 
     @handler
-    def paper_method_list(self, paper_id: str) -> List[Method]:
+    def paper_method_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Methods:
         """Return a list of methods mentioned in the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Method]: List of method objects.
+            Methods: Methods object.
         """
-        return [
-            Method(**t) for t in self.http.get(f"/papers/{paper_id}/methods/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/methods/", params=params),
+            Methods,
+        )
 
     @handler
-    def paper_result_list(self, paper_id: str) -> List[Result]:
+    def paper_result_list(
+        self, paper_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Results:
         """Return a list of evaluation results for the paper.
 
         Args:
             paper_id (str): ID of the paper.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Result]: List of result objects.
+            Results: Results object.
         """
-        return [
-            self.__create_result(result)
-            for result in self.http.get(f"/papers/{paper_id}/results/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/papers/{paper_id}/results/", params=params),
+            Results,
+        )
+
+    @handler
+    def repository_list(
+        self,
+        q: Optional[str] = None,
+        owner: Optional[str] = None,
+        name: Optional[str] = None,
+        stars: Optional[int] = None,
+        framework: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Papers:
+        """Return a paginated list of repositories.
+
+        Args:
+            q (str, optional): Search all searchable fields.
+            owner (str, optional): Filter repositories by owner.
+            name (str, optional): Filter repositories by name.
+            stars (int, optional): Filter repositories by minimum number of
+                stars.
+            framework (str, optional): Filter repositories by framework.
+                Available values: tf, pytorch, mxnet, torch, caffe2, jax,
+                paddle, mindspore.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        params = self.__params(page, items_per_page)
+
+        if q is not None:
+            params["q"] = q
+        if owner is not None:
+            params["owner"] = owner
+        if name is not None:
+            params["name"] = name
+        if stars is not None:
+            params["stars"] = str(stars)
+        if framework is not None:
+            params["framework"] = framework
+        return self.__page(
+            self.http.get("/repositories/", params=params),
+            Repositories,
+        )
+
+    @handler
+    def repository_owner_list(self, owner: str) -> Repositories:
+        """List all repositories for a specific repo owner.
+
+        Args:
+            owner (str): Repository owner.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        return self.__page(
+            self.http.get(f"/repositories/{owner}"),
+            Repositories,
+        )
+
+    @handler
+    def repository_get(self, owner: str, name: str) -> Repository:
+        """Return a repository by it's owner/name pair.
+
+        Args:
+            owner (str): Owner name.
+            name (str): Repository name.
+
+        Returns:
+            Repository: Repository object.
+        """
+        return Repository(**self.http.get(f"/repositories/{owner}/{name}/"))
+
+    @handler
+    def repository_paper_list(
+        self, owner: str, name: str, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
+        """List all papers connected to the repository.
+
+        Args:
+            owner (str): Owner name.
+            name (str): Repository name.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Papers: Papers object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
+                f"/repositories/{owner}/{name}/papers/", params=params
+            ),
+            Papers,
+        )
+
+    @handler
+    def author_list(
+        self,
+        q: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Authors:
+        """Return a paginated list of paper authors.
+
+        Args:
+            q (str, optional): Search all searchable fields.
+            full_name (str, optional): Filter authors by part of their full
+                name.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Repositories: Repositories object.
+        """
+        params = self.__params(page, items_per_page)
+
+        if q is not None:
+            params["q"] = q
+        if full_name is not None:
+            params["full_name"] = full_name
+        return self.__page(self.http.get("/authors/", params=params), Authors)
+
+    @handler
+    def author_get(self, author_id: str) -> Author:
+        """Return a specific author selected by its id.
+
+        Args:
+            author_id (str): Author id.
+
+        Returns:
+            Author: Author object.
+        """
+        return Author(**self.http.get(f"/authors/{author_id}/"))
+
+    @handler
+    def author_paper_list(
+        self, author_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Papers:
+        """List all papers connected to the author.
+
+        Args:
+            author_id (str): Author id.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Papers: Papers object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/authors/{author_id}/papers/", params=params),
+            Papers,
+        )
 
     @handler
     def conference_list(
-        self, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Conferences:
         """Return a paginated list of conferences.
 
         Args:
+            q (str, optional): Search all searchable fields.
+            name (str, optional): Filter conferences by part of the name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -200,11 +455,13 @@ class PapersWithCodeClient:
         Returns:
             Conferences: Conferences object.
         """
+        params = self.__params(page, items_per_page)
+        if q is not None:
+            params["q"] = q
+        if name is not None:
+            params["name"] = name
         return self.__page(
-            self.http.get(
-                "/conferences/", params=self.__params(page, items_per_page)
-            ),
-            Conferences,
+            self.http.get("/conferences/", params=params), Conferences
         )
 
     @handler
@@ -263,33 +520,47 @@ class PapersWithCodeClient:
 
     @handler
     def proceeding_paper_list(
-        self, conference_id: str, proceeding_id: str
-    ) -> List[Paper]:
+        self,
+        conference_id: str,
+        proceeding_id: str,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Papers:
         """Return a list of papers published in a confernce proceeding.
 
         Args:
             conference_id (str): ID of the conference.
             proceeding_id (str): ID of the proceding.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Paper]: List of paper objects.
+            Papers: Papers object.
         """
-        return [
-            Paper(**p)
-            for p in self.http.get(
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
                 f"/conferences/{conference_id}/proceedings/{proceeding_id}"
-                f"/papers/"
-            )
-        ]
+                f"/papers/",
+                params=params,
+            ),
+            Papers,
+        )
 
     @handler
     def area_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Areas:
         """Return a paginated list of areas.
 
         Args:
-            q (str): Filter areas by querying the area name.
+            q (str, optional): Filter areas by querying the area name.
+            name (str, optional): Filter areas by part of the name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -302,6 +573,9 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
+
         return self.__page(
             self.http.get("/areas/", params=params, timeout=timeout), Areas
         )
@@ -333,22 +607,24 @@ class PapersWithCodeClient:
         Returns:
             Tasks: Tasks object.
         """
+        params = self.__params(page, items_per_page)
         return self.__page(
-            self.http.get(
-                f"/areas/{area_id}/tasks/",
-                params=self.__params(page, items_per_page),
-            ),
-            Tasks,
+            self.http.get(f"/areas/{area_id}/tasks/", params=params), Tasks
         )
 
     @handler
     def task_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Tasks:
         """Return a paginated list of tasks.
 
         Args:
-            q (str): Filter tasks by querying the task name.
+            q (str, optional): Filter tasks by querying the task name.
+            name (str, optional): Filter tasks by part of th name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -361,6 +637,8 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
         return self.__page(
             self.http.get("/tasks/", params=params, timeout=timeout), Tasks
         )
@@ -412,6 +690,46 @@ class PapersWithCodeClient:
         self.http.delete(f"/tasks/{task_id}/")
 
     @handler
+    def task_parent_list(
+        self, task_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
+        """Return a paginated list of parent tasks for a selected task.
+
+        Args:
+            task_id (str): ID of the task.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Tasks: Tasks object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/tasks/{task_id}/parents/", params=params), Tasks
+        )
+
+    @handler
+    def task_child_list(
+        self, task_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Tasks:
+        """Return a paginated list of child tasks for a selected task.
+
+        Args:
+            task_id (str): ID of the task.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
+
+        Returns:
+            Tasks: Tasks object.
+        """
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/tasks/{task_id}/children/", params=params), Tasks
+        )
+
+    @handler
     def task_paper_list(
         self, task_id: str, page: int = 1, items_per_page: int = 50
     ) -> Papers:
@@ -426,37 +744,47 @@ class PapersWithCodeClient:
         Returns:
             Papers: Papers object.
         """
+        params = self.__params(page, items_per_page)
         return self.__page(
-            self.http.get(
-                f"/tasks/{task_id}/papers/",
-                params=self.__params(page, items_per_page),
-            ),
-            Papers,
+            self.http.get(f"/tasks/{task_id}/papers/", params=params), Papers
         )
 
     @handler
-    def task_evaluation_list(self, task_id: str) -> List[EvaluationTable]:
+    def task_evaluation_list(
+        self, task_id: str, page: int = 1, items_per_page: int = 50
+    ) -> EvaluationTables:
         """Return a list of evaluation tables for a selected task.
 
         Args:
             task_id (str): ID of the task.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[EvaluationTable]: List of short evaluation table objects.
+            EvaluationTables: EvaluationTables object.
         """
-        return [
-            EvaluationTable(**sp)
-            for sp in self.http.get(f"/tasks/{task_id}/evaluations/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(f"/tasks/{task_id}/evaluations/", params=params),
+            EvaluationTables,
+        )
 
     @handler
     def dataset_list(
-        self, q: Optional[str] = None, page: int = 1, items_per_page: int = 50
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
     ) -> Datasets:
         """Return a paginated list of datasets.
 
         Args:
-            q (str): Filter datasets by querying the dataset name.
+            q (str, optional): Filter datasets by querying the dataset name.
+            name (str, optional): Filter datasets by their name.
+            full_name (str, optional): Filter datasets by their full name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -469,6 +797,10 @@ class PapersWithCodeClient:
         if q is not None:
             params["q"] = q
             timeout = 60
+        if name is not None:
+            params["name"] = name
+        if full_name is not None:
+            params["full_name"] = full_name
         return self.__page(
             self.http.get("/datasets/", params=params, timeout=timeout),
             Datasets,
@@ -526,26 +858,42 @@ class PapersWithCodeClient:
 
     @handler
     def dataset_evaluation_list(
-        self, dataset_id: str
-    ) -> List[EvaluationTable]:
+        self, dataset_id: str, page: int = 1, items_per_page: int = 50
+    ) -> EvaluationTables:
         """Return a list of evaluation tables for a selected dataset.
 
         Args:
             dataset_id (str): ID of the dasaset.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[EvaluationTable]: List of short evaluation table objects.
+           EvaluationTables: EvaluationTables object.
         """
-        return [
-            EvaluationTable(**sp)
-            for sp in self.http.get(f"/datasets/{dataset_id}/evaluations/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
+                f"/datasets/{dataset_id}/evaluations/", params=params
+            ),
+            EvaluationTables,
+        )
 
     @handler
-    def method_list(self, page: int = 1, items_per_page: int = 50) -> Methods:
+    def method_list(
+        self,
+        q: Optional[str] = None,
+        name: Optional[str] = None,
+        full_name: Optional[str] = None,
+        page: int = 1,
+        items_per_page: int = 50,
+    ) -> Methods:
         """Return a paginated list of methods.
 
         Args:
+            q (str, optional): Search all searchable fields.
+            name (str, optional): Filter methods by part of the name.
+            full_name (str, optional): Filter methods by part of the full name.
             page (int): Desired page.
             items_per_page (int): Desired number of items per page.
                 Default: 50.
@@ -553,10 +901,17 @@ class PapersWithCodeClient:
         Returns:
             Methods: Methods object.
         """
+        params = self.__params(page, items_per_page)
+        timeout = None
+        if q is not None:
+            params["q"] = q
+            timeout = 60
+        if name is not None:
+            params["name"] = name
+        if full_name is not None:
+            params["full_name"] = full_name
         return self.__page(
-            self.http.get(
-                "/methods/", params=self.__params(page, items_per_page)
-            ),
+            self.http.get("/methods/", params=params, timeout=timeout),
             Methods,
         )
 
@@ -586,11 +941,9 @@ class PapersWithCodeClient:
         Returns:
             EvaluationTables: Evaluation table page object.
         """
+        params = self.__params(page, items_per_page)
         return self.__page(
-            self.http.get(
-                "/evaluations/", params=self.__params(page, items_per_page)
-            ),
-            EvaluationTables,
+            self.http.get("/evaluations/", params=params), EvaluationTables
         )
 
     @handler
@@ -654,19 +1007,27 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/")
 
     @handler
-    def evaluation_metric_list(self, evaluation_id: str) -> List[Metric]:
+    def evaluation_metric_list(
+        self, evaluation_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Metrics:
         """List all metrics used in the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Metric]: All metrics used in the evaluation table.
+            Metrics: Metrics object.
         """
-        return [
-            Metric(**m)
-            for m in self.http.get(f"/evaluations/{evaluation_id}/metrics/")
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
+                f"/evaluations/{evaluation_id}/metrics/", params=params
+            ),
+            Metrics,
+        )
 
     @handler
     def evaluation_metric_get(
@@ -738,21 +1099,27 @@ class PapersWithCodeClient:
         self.http.delete(f"/evaluations/{evaluation_id}/metrics/{metric_id}/")
 
     @handler
-    def evaluation_result_list(self, evaluation_id: str) -> List[Result]:
+    def evaluation_result_list(
+        self, evaluation_id: str, page: int = 1, items_per_page: int = 50
+    ) -> Results:
         """List all results from the evaluation table.
 
         Args:
             evaluation_id (str): ID of the evaluation table.
+            page (int): Desired page.
+            items_per_page (int): Desired number of items per page.
+                Default: 50.
 
         Returns:
-            List[Result]: All results from the evaluation table.
+            Results: Results object.
         """
-        return [
-            self.__create_result(result)
-            for result in self.http.get(
-                f"/evaluations/{evaluation_id}/results/"
-            )
-        ]
+        params = self.__params(page, items_per_page)
+        return self.__page(
+            self.http.get(
+                f"/evaluations/{evaluation_id}/results/", params=params
+            ),
+            Results,
+        )
 
     @handler
     def evaluation_result_get(
@@ -767,8 +1134,10 @@ class PapersWithCodeClient:
         Returns:
             Result: Requested result.
         """
-        return self.__create_result(
-            self.http.get(f"/evaluations/{evaluation_id}/results/{result_id}/")
+        return Result(
+            **self.http.get(
+                f"/evaluations/{evaluation_id}/results/{result_id}/"
+            )
         )
 
     @handler
@@ -784,8 +1153,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Created result.
         """
-        return self.__create_result(
-            self.http.post(
+        return Result(
+            **self.http.post(
                 f"/evaluations/{evaluation_id}/results/", data=result
             )
         )
@@ -804,8 +1173,8 @@ class PapersWithCodeClient:
         Returns:
             Result: Updated result.
         """
-        return self.__create_result(
-            self.http.patch(
+        return Result(
+            **self.http.patch(
                 f"/evaluations/{evaluation_id}/results/{result_id}/",
                 data=result,
             )
@@ -826,7 +1195,5 @@ class PapersWithCodeClient:
         self, evaluation: EvaluationTableSyncRequest
     ) -> EvaluationTableSyncResponse:
         d = self.http.post("/rpc/evaluation-synchronize/", data=evaluation)
-        d["results"] = [
-            self.__create_result_sync_data(result) for result in d["results"]
-        ]
+        d["results"] = [result for result in d["results"]]
         return EvaluationTableSyncResponse(**d)

@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from tea_client.models import TeaClientModel
+
+from paperswithcode.models.page import Page
 
 
 class Result(TeaClientModel):
@@ -16,8 +18,10 @@ class Result(TeaClientModel):
             not provided in the dataset used for other evaluations.
         paper (str, optional): Paper describing the evaluation.
         best_metric (str, optional): Name of the best metric.
-        evaluated_on (datetime, optional): Date of the result evaluation.
-        external_source_url (str, option): The URL to the external source (eg competition)
+        evaluated_on (str, optional): Date of the result evaluation in
+            YYYY-MM-DD format.
+        external_source_url (str, option): The URL to the external source (eg
+            competition).
     """
 
     id: str
@@ -27,8 +31,21 @@ class Result(TeaClientModel):
     uses_additional_data: bool
     paper: Optional[str]
     best_metric: Optional[str]
-    evaluated_on: Optional[datetime]
+    evaluated_on: Optional[str]
     external_source_url: Optional[str]
+
+
+class Results(Page):
+    """Object representing a paginated page of results.
+
+    Attributes:
+        count (int): Number of elements matching the query.
+        next_page (int, optional): Number of the next page.
+        previous_page (int, optional): Number of the previous page.
+        results (List[Result]): List of results on this page.
+    """
+
+    results: List[Result]
 
 
 class _ResultRequest(TeaClientModel):
@@ -64,11 +81,14 @@ class ResultCreateRequest(_ResultRequest):
     Attributes:
         metrics (dict): Dictionary of metrics and metric values.
         methodology (str): Methodology used for this implementation.
-        uses_additional_data (bool, optional): Does this evaluation uses additional data
-            not provided in the dataset used for other evaluations.
+        uses_additional_data (bool, optional): Does this evaluation uses
+            additional data not provided in the dataset used for other
+            valuations.
         paper (str, optional): Paper describing the evaluation.
-        evaluated_on (str, optional): Date of the result evaluation: YYYY-MM-DD format
-        external_source_url (str, option): The URL to the external source (eg competition)
+        evaluated_on (str, optional): Date of the result evaluation: YYYY-MM-DD
+            format.
+        external_source_url (str, option): The URL to the external source (eg
+            competition).
     """
 
     metrics: dict
@@ -89,8 +109,10 @@ class ResultUpdateRequest(_ResultRequest):
             additional data not provided in the dataset used for other
             evaluations.
         paper (str, optional): Paper describing the evaluation.
-        evaluated_on (datetime, optional): Date of the result evaluation: YYYY-MM-DD format
-        external_source_url (str, option): The URL to the external source (eg competition)
+        evaluated_on (datetime, optional): Date of the result evaluation:
+            YYYY-MM-DD format.
+        external_source_url (str, option): The URL to the external source (eg
+            competition).
     """
 
     metrics: Optional[dict] = None
