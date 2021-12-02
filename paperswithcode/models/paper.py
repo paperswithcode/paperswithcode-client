@@ -18,7 +18,7 @@ class Paper(TeaClientModel):
         title (str): Paper title.
         abstract (str): Paper abstract.
         authors (List[str]): List of paper authors.
-        published (date): Paper publication date.
+        published (date, optional): Paper publication date.
         conference (str, optional): ID of the conference in which the paper was
             published.
         conference_url_abs (str, optional): URL to the conference paper page.
@@ -35,7 +35,7 @@ class Paper(TeaClientModel):
     title: str
     abstract: str
     authors: List[str]
-    published: date
+    published: Optional[date]
     conference: Optional[str]
     conference_url_abs: Optional[str]
     conference_url_pdf: Optional[str]
