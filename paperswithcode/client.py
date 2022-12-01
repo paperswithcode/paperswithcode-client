@@ -121,6 +121,7 @@ class PapersWithCodeClient:
     @handler
     def paper_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         arxiv_id: Optional[str] = None,
         title: Optional[str] = None,
@@ -131,6 +132,8 @@ class PapersWithCodeClient:
         """Return a paginated list of papers.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Filter papers by querying the paper title and
                 abstract.
             arxiv_id (str, optional): Filter papers by arxiv id.
@@ -145,6 +148,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
         timeout = None
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
             timeout = 60
@@ -278,6 +283,7 @@ class PapersWithCodeClient:
     @handler
     def repository_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         owner: Optional[str] = None,
         name: Optional[str] = None,
@@ -289,6 +295,8 @@ class PapersWithCodeClient:
         """Return a paginated list of repositories.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Search all searchable fields.
             owner (str, optional): Filter repositories by owner.
             name (str, optional): Filter repositories by name.
@@ -306,6 +314,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
 
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
         if owner is not None:
@@ -376,6 +386,7 @@ class PapersWithCodeClient:
     @handler
     def author_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         full_name: Optional[str] = None,
         page: int = 1,
@@ -384,6 +395,8 @@ class PapersWithCodeClient:
         """Return a paginated list of paper authors.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Search all searchable fields.
             full_name (str, optional): Filter authors by part of their full
                 name.
@@ -396,6 +409,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
 
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
         if full_name is not None:
@@ -438,6 +453,7 @@ class PapersWithCodeClient:
     @handler
     def conference_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         name: Optional[str] = None,
         page: int = 1,
@@ -446,6 +462,8 @@ class PapersWithCodeClient:
         """Return a paginated list of conferences.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Search all searchable fields.
             name (str, optional): Filter conferences by part of the name.
             page (int): Desired page.
@@ -456,6 +474,8 @@ class PapersWithCodeClient:
             Conferences: Conferences object.
         """
         params = self.__params(page, items_per_page)
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
         if name is not None:
@@ -551,6 +571,7 @@ class PapersWithCodeClient:
     @handler
     def area_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         name: Optional[str] = None,
         page: int = 1,
@@ -559,6 +580,8 @@ class PapersWithCodeClient:
         """Return a paginated list of areas.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Filter areas by querying the area name.
             name (str, optional): Filter areas by part of the name.
             page (int): Desired page.
@@ -570,6 +593,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
         timeout = None
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
             timeout = 60
@@ -615,6 +640,7 @@ class PapersWithCodeClient:
     @handler
     def task_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         name: Optional[str] = None,
         page: int = 1,
@@ -623,6 +649,8 @@ class PapersWithCodeClient:
         """Return a paginated list of tasks.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Filter tasks by querying the task name.
             name (str, optional): Filter tasks by part of th name.
             page (int): Desired page.
@@ -634,6 +662,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
         timeout = None
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
             timeout = 60
@@ -773,6 +803,7 @@ class PapersWithCodeClient:
     @handler
     def dataset_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         name: Optional[str] = None,
         full_name: Optional[str] = None,
@@ -782,6 +813,8 @@ class PapersWithCodeClient:
         """Return a paginated list of datasets.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Filter datasets by querying the dataset name.
             name (str, optional): Filter datasets by their name.
             full_name (str, optional): Filter datasets by their full name.
@@ -794,6 +827,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
         timeout = None
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
             timeout = 60
@@ -882,6 +917,7 @@ class PapersWithCodeClient:
     @handler
     def method_list(
         self,
+        ordering: Optional[str] = None,
         q: Optional[str] = None,
         name: Optional[str] = None,
         full_name: Optional[str] = None,
@@ -891,6 +927,8 @@ class PapersWithCodeClient:
         """Return a paginated list of methods.
 
         Args:
+            ordering (str, optional): Which field to use when ordering the
+                results.
             q (str, optional): Search all searchable fields.
             name (str, optional): Filter methods by part of the name.
             full_name (str, optional): Filter methods by part of the full name.
@@ -903,6 +941,8 @@ class PapersWithCodeClient:
         """
         params = self.__params(page, items_per_page)
         timeout = None
+        if ordering is not None:
+            params["ordering"] = ordering
         if q is not None:
             params["q"] = q
             timeout = 60
